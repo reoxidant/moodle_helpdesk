@@ -112,7 +112,7 @@ if (empty($result)) {
 |
 */
 
-require __DIR__.'/../ticketit/bootstrap/autoload.php';
+require __DIR__.'/ticketit/bootstrap/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -126,7 +126,7 @@ require __DIR__.'/../ticketit/bootstrap/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../ticketit/bootstrap/app.php';
+$app = require_once __DIR__.'/ticketit/bootstrap/app.php';
 
 
 /*
