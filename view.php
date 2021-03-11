@@ -7,17 +7,20 @@
  */
 
 require("../../config.php");
-require_once($CFG->dirroot."/local/helpdesk/locallib.php");
+require_once($CFG -> dirroot . "/local/helpdesk/locallib.php");
 
 require_login();
 
 $url = new moodle_url("/local/helpdesk/view.php");
 
-$PAGE->set_url($url);
+$context = context_system ::instance();
+$PAGE -> set_context($context);
+
+$PAGE -> set_url($url);
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
-$PAGE->set_title($pluginname);
-$PAGE->set_heading($pluginname);
+$PAGE -> set_title($pluginname);
+$PAGE -> set_heading($pluginname);
 
-echo $OUTPUT->header();
-echo $OUTPUT->footer();
+echo $OUTPUT -> header();
+echo $OUTPUT -> footer();

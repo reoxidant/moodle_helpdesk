@@ -8,5 +8,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/lib/uploadlib.php');
+require_once($CFG -> dirroot . '/lib/uploadlib.php');
 
