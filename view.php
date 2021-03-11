@@ -22,5 +22,14 @@ $pluginname = get_string('pluginname', 'local_helpdesk');
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 
+$renderer = $PAGE->get_renderer('helpdesk');
+
 echo $OUTPUT -> header();
+
+echo $OUTPUT -> box_start('','helpdesk-view');
+
+
+
+echo $OUTPUT -> box_end();
+
 echo $OUTPUT -> footer();
