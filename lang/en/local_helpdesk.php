@@ -6,10 +6,7 @@
  * @package PhpStorm
  */
 
-$string["pluginname"] = "Helpdesk";
-
+$string["pluginname"] = "User support - Helpdesk";
+$string['pluginname:plural'] = 'User support - helpdesks';
 $string["helpdesk:develop"] = "Be chosen to resolve issues";
-$string["tracker:report"] = "Report issues";
-$string["errorcoursemodid"] = "Course Module ID was incorrect";
-$string["errorcoursemisconfigured"] = "Course is misconfigured";
-$string['errormoduleincorrect'] = 'Course module is incorrect';
+$string["helpdesk:report"] = "Report issues";
