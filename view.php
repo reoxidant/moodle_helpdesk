@@ -10,31 +10,6 @@ require("../../config.php");
 require_once($CFG -> dirroot . "/local/helpdesk/lib.php");
 require_once($CFG -> dirroot . "/local/helpdesk/locallib.php");
 
-// Check optional parameters
-$moduleid = optional_param("moduleid", 0, PARAM_INT);
-$instanceid = optional_param("instanceid", 0, PARAM_INT);
-$issueid = optional_param("issueid", "", PARAM_INT);
-$action = optional_param("action", "", PARAM_ALPHA);
-
-if ($moduleid) {
-    if (!$cm = get_coursemodule_from_id("helpdesk", $id)) {
-        print_error("errorcoursemodid", "helpdesk");
-    }
-    if (!$course = $DB -> get_record("course", array("id" => $cm -> course))) {
-        print_error("errorcoursemisconfigured", "helpdesk");
-    }
-    if (!$helpdesk = $DB -> get_record("helpdesk", array("id" => $cm -> instance))) {
-        print_error("errormoduleincorrect", "helpdesk");
-    }
-} else {
-    if (!$helpdesk = $DB -> get_record("helpdesk", array("id" => $helpdesk -> course))) {
-        print_error("errormoduleincorrect", "helpdesk");
-    }
-    if (!$cm = get_coursemodule_from_instance("helpdesk", $helpdesk -> id)) {
-        print_error("errorcoursemodid", "helpdesk");
-    }
-}
-
 $screen = helpdesk_resolve_screen($cm);
 $view = helpdesk_resolve_view();
 
