@@ -41,21 +41,19 @@ const ENABLED_VALIDATED = 512;
 const ENABLED_ALL = 1023;
 
 /**
+ * @return array|false|float|int|mixed|string|null
  * @throws coding_exception
- * @throws dml_exception
  */
-function helpdesk_resolve_screen(&$cm){
+function helpdesk_resolve_screen(){
     global $SESSION;
-
-    $context = context_system::instance($cm->id);
 
     $screen = optional_param('screen', @$SESSION->helpdesk_current_screen, PARAM_ALPHA);
 
-    if(empty($screen) && $context !== null){
+    if(empty($screen)){
         if(has_capability('local/helpdesk:develop', $context)){
             $defaultscreen = 'work';
         } elseif (has_capability('local/helpdesk:report', $context)) {
-            $defaultscreen = 'helpdesk';
+            $defaultscreen = 'tickets';
         } else {
             $defaultscreen = 'browse';
         }

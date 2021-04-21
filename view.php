@@ -10,27 +10,17 @@ require("../../config.php");
 require_once($CFG -> dirroot . "/local/helpdesk/lib.php");
 require_once($CFG -> dirroot . "/local/helpdesk/locallib.php");
 
-$screen = helpdesk_resolve_screen($cm);
+$issueid = optional_param('issueid', '', PARAM_INT);
+$action = optional_param('action', '', PARAM_ALPHA);
+
+$screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
 
-$url = new moodle_url("/local/helpdesk/view.php", array("id" => $cm -> id, "view" => $view, "screen" => $screen));
+$url = new moodle_url("/local/helpdesk/view.php", array("view" => $view, "screen" => $screen));
 
-if ($view === "view" && (empty($screen) || $screen === "viewanissue" || $screen === "editanissue") && empty($issueid)) {
-    redirect(new moodle_url("/local/helpdesk/view.php", array("id" => $cm -> id, "view" => "view", "screen" => "browse")));
-}
+require_login();
 
-if ($view === "reportanissue") {
-    redirect(new moodle_url("/local/helpdesk/reportissue.php", array("id" => $id)));
-}
-
-// Implicit routing.
-
-if ($issueid) {
-    $view = "view";
-    if (empty($screen)) {
-        $screen = "viewanissue";
-    }
-}
+$pluginname = get_string('pluginname', 'local_helpdesk');
 
 $context = context_system ::instance();
 $PAGE -> set_context($context);
@@ -38,21 +28,25 @@ $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 $PAGE -> set_url($url);
 
-$pluginname = get_string('pluginname', 'local_helpdesk');
+$renderer = $PAGE -> get_renderer('local_helpdesk');
 
-$renderer = $PAGE -> get_renderer('helpdesk');
-
-$result = 0;
-if ($view == 'view') {
-    if ($action != '') {
-        $result = include($CFG -> dirroot . '/local/helpdesk/views/view.controller.php');
-    }
+if (($view === "view") && $action !== '') {
+    $result = include($CFG->dirroot.'/local/helpdesk/views/view_controller.php');
 }
 
 echo $OUTPUT -> header();
 
 echo $OUTPUT -> box_start('', 'helpdesk-view');
-echo $renderer -> tabs($view, $screen, null);
+echo $renderer -> tabs($view, $screen);
+
+if ($view === 'view') {
+    switch ($screen) {
+        case 'browse':
+            $resolved = 0;
+            include($CFG->dirroot."/local/helpdesk/views/view_issue_list.php");
+            break;
+    }
+}
 
 echo $OUTPUT -> box_end();
 
