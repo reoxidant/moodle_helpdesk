@@ -8,52 +8,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-//for upload file and use some extensions was deprecated
-//require_once($CFG -> dirroot . '/lib/uploadlib.php');
-if (isset($CFG -> dirroot)) {
-    require_once($CFG->dirroot.'/local/helpdesk/mailtemplatelib.php');
-}
-
-// Define helpdesk status
-
-const POSTED = 0;
-const OPEN = 1;
-const RESOLVING = 2;
-const WAITING = 3;
 const RESOLVED = 4;
 const ABANDONNED = 5;
-const TRANSFERED = 6;
-const TESTING = 7;
-const PUBLISHED = 8;
 const VALIDATED = 9;
-
-// Define enabled status
-const ENABLED_POSTED = 1;
-const ENABLED_OPEN = 2;
-const ENABLED_RESOLVING = 4;
-const ENABLED_WAITING = 8;
-const ENABLED_RESOLVED = 16;
-const ENABLED_ABANDONNED = 32;
-const ENABLED_TRANSFERED = 64;
-const ENABLED_TESTING = 128;
-const ENABLED_PUBLISHED = 256;
-const ENABLED_VALIDATED = 512;
-const ENABLED_ALL = 1023;
 
 /**
  * @return array|false|float|int|mixed|string|null
  * @throws coding_exception
+ * @throws dml_exception
  */
 function helpdesk_resolve_screen(){
     global $SESSION;
 
     $screen = optional_param('screen', @$SESSION->helpdesk_current_screen, PARAM_ALPHA);
 
+    $context = context_system::instance();
+
     if(empty($screen)){
-        if(has_capability('local/helpdesk:develop', $context)){
-            $defaultscreen = 'work';
-        } elseif (has_capability('local/helpdesk:report', $context)) {
-            $defaultscreen = 'tickets';
+        if ($context !== null) {
+            if(has_capability('local/helpdesk:develop', $context)){
+                $defaultscreen = 'work';
+            } elseif (has_capability('local/helpdesk:report', $context)) {
+                $defaultscreen = 'tickets';
+            }
         } else {
             $defaultscreen = 'browse';
         }
@@ -64,16 +41,47 @@ function helpdesk_resolve_screen(){
     return $screen;
 }
 
+/**
+ * @return array|false|float|int|mixed|string|null
+ * @throws coding_exception
+ */
 function helpdesk_resolve_view(){
     global $SESSION;
 
-    $view = optional_param("view", @$SESSION->helpdesk_current_view, PARAM_ALPHA);
+    $view = optional_param('view', @$SESSION->helpdesk_current_view, PARAM_ALPHA);
 
     if(empty($view)){
-        $defaultview = "view";
+        $defaultview = 'view';
         $view = $defaultview;
     }
 
     $SESSION->helpdesk_current_view = $view;
     return $view;
+}
+
+function has_assigned_issues($resolved = false): int
+{
+    global $DB, $USER;
+
+    $select = '
+        issueid = ? AND
+        assignedto = ?
+    ';
+
+    if ($resolved) {
+        $select .= '
+            AND
+            status IN ('.RESOLVED.','.ABANDONNED.','.VALIDATED.')
+        ';
+    } else {
+        $select .= '
+            AND
+            status NOT IN ('.RESOLVED.','.ABANDONNED.','.VALIDATED.')
+        ';
+    }
+
+    $search = [];
+
+    return 0;
+//    return $DB->count_records_select('tracker_issue', $select, $search);
 }
