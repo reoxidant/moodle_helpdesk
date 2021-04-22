@@ -8,11 +8,11 @@
 
 require_once $CFG->libdir."/formslib.php";
 
-class ReportIssueForm extends moodleform{
+class HelpDeskIssueForm extends moodleform{
 
-    var $elements;
-    var $editoroptions;
-    var $context;
+    public $elements;
+    public $editoroptions;
+    public $context;
 
     function definition()
     {

@@ -8,6 +8,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+const POSTED = 0;
 const RESOLVED = 4;
 const ABANDONNED = 5;
 const VALIDATED = 9;
@@ -84,4 +85,19 @@ function has_assigned_issues($resolved = false): int
 
     return 0;
 //    return $DB->count_records_select('tracker_issue', $select, $search);
+}
+
+function helpdesk_submit_issue_form(&$data): StdClass
+{
+    global $CFG, $DB, $USER;
+
+    $issue = new StdClass();
+    $issue->datereported = time();
+    $issue->summary = $data->summary;
+    $issue->description = $data->description_editor['text'];
+    $issue->descriptionformat = $data->description_editor['format'];
+    $issue->status = POSTED;
+    $issue->reportedby = $USER->id;
+
+    return $issue;
 }

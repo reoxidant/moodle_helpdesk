@@ -9,4 +9,32 @@
 require('../../config.php');
 require_once($CFG->dirroot. '/local/helpdesk/lib.php');
 require_once($CFG->dirroot. '/local/helpdesk/locallib.php');
-require_once($CFG->dirroot. '/local/helpdesk/forms/reportissue_form.php');
+require_once($CFG->dirroot. '/local/helpdesk/forms/report_issue_form.php');
+
+$screen = helpdesk_resolve_screen();
+$view = helpdesk_resolve_view();
+
+$context = context_system::instance();
+
+require_login();
+require_capability('local/helpdesk:report', $context);
+
+$pluginname = get_string('pluginname', 'local_helpdesk');
+$url = new moodle_url('local/helpdesk/report_issue.php');
+
+$context = context_system ::instance();
+$PAGE -> set_context($context);
+$PAGE -> set_pagelayout('standard');
+$PAGE -> navbar -> add($pluginname);
+$PAGE -> set_title($pluginname);
+$PAGE -> set_heading($pluginname);
+$PAGE -> set_url($url);
+
+$form = new HelpDeskIssueForm($url);
+
+if (!$form -> is_cancelled() && $data = $form -> get_data()) {
+    if (!$issue = helpdesk_submit_issue_form($data)){
+        print_error('', 'local_helpdesk');
+    }
+    die;
+}
