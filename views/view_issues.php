@@ -6,8 +6,8 @@
  * @package PhpStorm
  */
 
-if (!defined("MOODLE_INTERNAL")) {
-    die("Direct access to this script is forbidden.");    // It must be included from view.php in mod/tracker
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    // It must be included from view.php in mod/tracker
 }
 
 require_once($CFG->libdir.'/tablelib.php');
@@ -22,13 +22,13 @@ require_once($CFG->libdir.'/tablelib.php');
 
 $table_columns = array('id', 'summary', 'date_reported', 'reported', 'assigned', 'status', 'watches', 'transfered', 'action');
 
-$priority = get_string("priority", "helpdesk");
-$issue_number = get_string("issue_number", "helpdesk");
-$summary = get_string("summary", "helpdesk");
-$date_reported = get_string("date_reported", "helpdesk");
-$reported = get_string('reported', "helpdesk");
-$assigned = get_string('assigned', "helpdesk");
-$status = get_string('status', "helpdesk");
-$watches = get_string('watches', "helpdesk");
+$priority = get_string('priority', 'local_helpdesk');
+$issue_number = get_string('issue_number', 'local_helpdesk');
+$summary = get_string('summary', 'local_helpdesk');
+$date_reported = get_string('date_reported', 'local_helpdesk');
+$reported = get_string('reported', 'local_helpdesk');
+$assigned = get_string('assigned', 'local_helpdesk');
+$status = get_string('status', 'local_helpdesk');
+$watches = get_string('watches', 'local_helpdesk');
 
 echo '</form>';

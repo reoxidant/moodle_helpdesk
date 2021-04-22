@@ -6,9 +6,9 @@
  * @package PhpStorm
  */
 
-require("../../config.php");
-require_once($CFG -> dirroot . "/local/helpdesk/lib.php");
-require_once($CFG -> dirroot . "/local/helpdesk/locallib.php");
+require('../../config.php');
+require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
+require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 
 $issueid = optional_param('issueid', '', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -16,21 +16,26 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
 
-$url = new moodle_url("/local/helpdesk/view.php", array("view" => $view, "screen" => $screen));
+$url = new moodle_url('/local/helpdesk/view.php', ['view' => $view, 'screen' => $screen]);
 
-require_login();
+if (!isloggedin() or isguestuser()) {
+    require_login();
+    die;
+}
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
 
 $context = context_system ::instance();
 $PAGE -> set_context($context);
+$PAGE -> set_pagelayout('standard');
+$PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 $PAGE -> set_url($url);
 
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
-if (($view === "view") && $action !== '') {
+if (($view === 'view') && $action !== '') {
     $result = include($CFG->dirroot.'/local/helpdesk/views/view_controller.php');
 }
 
@@ -43,7 +48,7 @@ if ($view === 'view') {
     switch ($screen) {
         case 'browse':
             $resolved = 0;
-            include($CFG->dirroot."/local/helpdesk/views/view_issue_list.php");
+            include($CFG->dirroot. '/local/helpdesk/views/view_issues.php');
             break;
     }
 }

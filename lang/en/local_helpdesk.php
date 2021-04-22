@@ -6,13 +6,16 @@
  * @package PhpStorm
  */
 
-$string["pluginname"] = "User support - Helpdesk";
-$string['pluginname:plural'] = 'User support - helpdesks';
-$string["helpdesk:develop"] = "Be chosen to resolve issues";
-$string["helpdesk:report"] = "Report issues";
+$string['pluginname'] = 'User support - Helpdesk';
+$string['view'] = 'Views';
+$string['resolved_plural'] = 'Resolved';
+$string['profile'] = 'User settings';
+$string['new_issue'] = 'New ticket';
+$string['issues'] = 'ticket records';
+$string['reports'] = 'Reports';
+$string['administration'] = 'Administration';
+$string['tickets'] = 'Tickets';
+$string['browse'] = 'Browse';
+$string['search'] = 'Search';
 
-$string["view"] = 'Views';
-$string["resolved_plural"] = 'Resolved';
-$string["profile"] = 'User settings';
-
-$string["error:no_access_all_issues"] = 'You do not have access to view all issues.';
+$string['error_cannot_submit_ticket'] = 'Error registering new ticket';
