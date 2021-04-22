@@ -6,11 +6,10 @@
  * @package PhpStorm
  */
 
-
 $capabilities = array(
-    'local/helpdesk:view_all_issues' => array(
+    'local/helpdesk:view_issues' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
             'manager' => CAP_ALLOW
         )
@@ -18,7 +17,7 @@ $capabilities = array(
 
     'local/helpdesk:report' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
@@ -29,7 +28,7 @@ $capabilities = array(
 
     'local/helpdesk:develop' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
@@ -38,4 +37,21 @@ $capabilities = array(
         )
     ),
 
+    'local/helpdesk:view_reports' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetype' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
+
+    'local/helpdesk:configure' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetype' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
 );
