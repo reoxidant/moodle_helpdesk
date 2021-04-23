@@ -18,16 +18,17 @@ const VALIDATED = 9;
  * @throws coding_exception
  * @throws dml_exception
  */
-function helpdesk_resolve_screen(){
+function helpdesk_resolve_screen()
+{
     global $SESSION;
 
-    $screen = optional_param('screen', @$SESSION->helpdesk_current_screen, PARAM_ALPHA);
+    $screen = optional_param('screen', @$SESSION -> helpdesk_current_screen, PARAM_ALPHA);
 
-    $context = context_system::instance();
+    $context = context_system ::instance();
 
-    if(empty($screen)){
+    if (empty($screen)) {
         if ($context !== null) {
-            if(has_capability('local/helpdesk:develop', $context)){
+            if (has_capability('local/helpdesk:develop', $context)) {
                 $defaultscreen = 'work';
             } elseif (has_capability('local/helpdesk:report', $context)) {
                 $defaultscreen = 'tickets';
@@ -38,7 +39,7 @@ function helpdesk_resolve_screen(){
         $screen = $defaultscreen;
     }
 
-    $SESSION->helpdesk_current_screen = $screen;
+    $SESSION -> helpdesk_current_screen = $screen;
     return $screen;
 }
 
@@ -46,17 +47,18 @@ function helpdesk_resolve_screen(){
  * @return array|false|float|int|mixed|string|null
  * @throws coding_exception
  */
-function helpdesk_resolve_view(){
+function helpdesk_resolve_view()
+{
     global $SESSION;
 
-    $view = optional_param('view', @$SESSION->helpdesk_current_view, PARAM_ALPHA);
+    $view = optional_param('view', @$SESSION -> helpdesk_current_view, PARAM_ALPHA);
 
-    if(empty($view)){
+    if (empty($view)) {
         $defaultview = 'view';
         $view = $defaultview;
     }
 
-    $SESSION->helpdesk_current_view = $view;
+    $SESSION -> helpdesk_current_view = $view;
     return $view;
 }
 
@@ -72,12 +74,12 @@ function has_assigned_issues($resolved = false): int
     if ($resolved) {
         $select .= '
             AND
-            status IN ('.RESOLVED.','.ABANDONNED.','.VALIDATED.')
+            status IN (' . RESOLVED . ',' . ABANDONNED . ',' . VALIDATED . ')
         ';
     } else {
         $select .= '
             AND
-            status NOT IN ('.RESOLVED.','.ABANDONNED.','.VALIDATED.')
+            status NOT IN (' . RESOLVED . ',' . ABANDONNED . ',' . VALIDATED . ')
         ';
     }
 
@@ -92,12 +94,12 @@ function helpdesk_submit_issue_form(&$data): StdClass
     global $CFG, $DB, $USER;
 
     $issue = new StdClass();
-    $issue->datereported = time();
-    $issue->summary = $data->summary;
-    $issue->description = $data->description_editor['text'];
-    $issue->descriptionformat = $data->description_editor['format'];
-    $issue->status = POSTED;
-    $issue->reportedby = $USER->id;
+    $issue -> datereported = time();
+    $issue -> summary = $data -> summary;
+    $issue -> description = $data -> description_editor['text'];
+    $issue -> descriptionformat = $data -> description_editor['format'];
+    $issue -> status = POSTED;
+    $issue -> reportedby = $USER -> id;
 
     return $issue;
 }
