@@ -17,5 +17,7 @@ $string['administration'] = 'Administration';
 $string['tickets'] = 'Tickets';
 $string['browse'] = 'Browse';
 $string['search'] = 'Search';
+$string['summary'] = 'Summary';
+$string['thanks_default'] = 'Thanks to contributing to the constant enhancement of this service.';
 
 $string['error_cannot_submit_ticket'] = 'Error registering new ticket';
