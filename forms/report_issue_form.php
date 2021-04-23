@@ -6,7 +6,7 @@
  * @package PhpStorm
  */
 
-require_once $CFG -> libdir . "/formslib.php";
+require_once $CFG -> libdir . '/formslib.php';
 
 /**
  * Class HelpDeskIssueForm
