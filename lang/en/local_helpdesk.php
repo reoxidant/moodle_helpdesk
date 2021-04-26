@@ -6,18 +6,19 @@
  * @package PhpStorm
  */
 
-$string['pluginname'] = 'User support - Helpdesk';
-$string['view'] = 'Views';
-$string['resolved_plural'] = 'Resolved';
-$string['profile'] = 'User settings';
-$string['new_issue'] = 'New ticket';
-$string['issues'] = 'ticket records';
-$string['reports'] = 'Reports';
-$string['administration'] = 'Administration';
-$string['tickets'] = 'Tickets';
-$string['browse'] = 'Browse';
-$string['search'] = 'Search';
-$string['summary'] = 'Summary';
-$string['thanks_default'] = 'Thanks to contributing to the constant enhancement of this service.';
+$string['pluginname'] = 'Центр поддержки';
+$string['view'] = 'Управление заявками';
+$string['resolved_plural'] = 'Закрыта';
+$string['profile'] = 'Профиль';
+$string['new_issue'] = 'Создать заявку';
+$string['issues'] = 'заявок решено';
+$string['reports'] = 'Обращения';
+$string['administration'] = 'Администрирование';
+$string['tickets'] = 'Мои заявки';
+$string['browse'] = 'Все заявки';
+$string['search'] = 'Поиск заявок';
+$string['summary'] = 'Тема';
+$string['thanks_default'] = 'Спасибо за заявку! Наш менеджер свяжется с вами в ближайшее время.';
 
-$string['error_cannot_submit_ticket'] = 'Error registering new ticket';
+$string['error_cannot_submit_ticket'] = 'Ошибка регистрации новой заявки';
+$string['error_record_issue'] = 'Не удалось создать новую заявку';
