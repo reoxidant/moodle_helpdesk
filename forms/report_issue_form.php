@@ -50,7 +50,6 @@ class HelpDeskIssueForm extends moodleform
         $mform -> setType('id', PARAM_INT);
 
         $mform -> addElement('text', 'summary', get_string('summary', 'local_helpdesk'), array('size' => 80));
-
         $mform -> setType('summary', PARAM_TEXT);
         $mform -> addRule('summary', null, 'required', null, 'client');
 
