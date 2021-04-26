@@ -101,5 +101,10 @@ function helpdesk_submit_issue_form(&$data): StdClass
     $issue -> status = POSTED;
     $issue -> reportedby = $USER -> id;
 
-    return $issue;
+    if ($issue -> id = $DB -> insert_record('helpdesk_issue', $issue)) {
+        $data -> issueid = $issue -> id;
+        return $issue;
+    }
+
+    print_error('error_record_issue', 'local_helpdesk');
 }
