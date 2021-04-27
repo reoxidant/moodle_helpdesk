@@ -9,9 +9,30 @@
 defined('MOODLE_INTERNAL') || die();
 
 const POSTED = 0;
+const OPEN = 1;
+const RESOLVING = 2;
+const WAITING = 3;
 const RESOLVED = 4;
 const ABANDONNED = 5;
+const TRANSFERED = 6;
+const TESTING = 7;
+const PUBLISHED = 8;
 const VALIDATED = 9;
+
+global $STATUS_CODES;
+
+$STATUS_CODES = array(
+    POSTED => 'posted',
+    OPEN => 'open',
+    RESOLVING => 'resolving',
+    WAITING => 'waiting',
+    RESOLVED => 'resolved',
+    ABANDONNED => 'abandonned',
+    TRANSFERED => 'transfered',
+    TESTING => 'testing',
+    PUBLISHED => 'published',
+    VALIDATED => 'validated'
+);
 
 /**
  * @return array|false|float|int|mixed|string|null
