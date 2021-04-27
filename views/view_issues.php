@@ -132,8 +132,74 @@ $table -> initialbars(true);
 
 $table -> set_attribute('cellspacing', '0');
 $table -> set_attribute('id', 'issues');
-$table -> set_attribute('class', 'issue_list');
+$table -> set_attribute('class', 'list_issue');
 $table -> set_attribute('width', '100%');
 
+$table -> set_attribute('priority', 'list_priority');
+$table -> set_attribute('id', 'list_issue_number');
+$table -> set_attribute('summary', 'list_summary');
+$table -> set_attribute('datereported', 'time_label');
+$table -> set_attribute('reportedby', 'list_reportedby');
+$table -> set_attribute('assigned', 'list_assigned');
+$table -> set_attribute('watches', 'list_watches');
+$table -> set_attribute('status', 'list_status');
+$table -> set_attribute('action', 'list_action');
 
-echo '</form>';
+$table -> setup();
+
+$where = $table -> get_sql_where();
+$sort = $table -> get_sql_sort();
+$table -> pagesize($limit, $num_records);
+
+if ($sort !== null) {
+    $sql .= " ORDER BY $sort";
+} else {
+    $sql .= ' ORDER BY priority ASC';
+}
+
+$issue = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
+
+$max_priority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
+
+if (!empty($issues)) {
+    foreach ($issues as $issue) {
+
+        $issue_number = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
+
+        $summary = "<a href=\"view.php?view=view&amp;screen=view_issue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
+
+        $datereported = date("Y/m/d H:i, $issue->datereported");
+
+        $user = $DB -> get_record('user', array('id' => $issue -> reportedby));
+
+        $reportedby = fullname($user);
+
+        $assigned = '';
+
+        $user = $DB -> get_record('user', array('id' => $issue -> assigned));
+
+        $status_code = $STATUS_CODES[$issue -> status];
+
+        $status = '<div class=\"status_' . $status_code . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
+
+        $has_resolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
+
+        $solution = ($has_resolution) ?
+            "<img src=\"" . $OUTPUT -> pix_url('solution', 'helpdesk') . "\" 
+                  height='15' 
+                  alt=\"" . get_string('has_resolution', 'local_helpdesk') . "\" 
+            />" : '';
+
+        $actions = '';
+    }
+
+    if (has_capability('local/helpdesk:manage', $context) || has_capability('local/helpdesk:resolve', $context)) {
+        $actions =
+            "<a href=\"view.php?view=view&amp;issueid=" . $issue -> id . "&screen=edit_issue\" title = \"" . get_string('update') . "\">
+                <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
+            </a>";
+    }
+}
+
+
+echo ' </form > ';
