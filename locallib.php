@@ -8,30 +8,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-const POSTED = 0;
 const OPEN = 1;
 const RESOLVING = 2;
-const WAITING = 3;
-const RESOLVED = 4;
-const ABANDONNED = 5;
-const TRANSFERED = 6;
-const TESTING = 7;
-const PUBLISHED = 8;
-const VALIDATED = 9;
+const RESOLVED = 3;
 
 global $STATUS_CODES;
 
 $STATUS_CODES = array(
-    POSTED => 'posted',
     OPEN => 'open',
     RESOLVING => 'resolving',
-    WAITING => 'waiting',
-    RESOLVED => 'resolved',
-    ABANDONNED => 'abandonned',
-    TRANSFERED => 'transfered',
-    TESTING => 'testing',
-    PUBLISHED => 'published',
-    VALIDATED => 'validated'
+    RESOLVED => 'resolved'
 );
 
 /**
@@ -49,9 +35,7 @@ function helpdesk_resolve_screen()
 
     if (empty($screen)) {
         if ($context !== null) {
-            if (has_capability('local/helpdesk:develop', $context)) {
-                $defaultscreen = 'work';
-            } elseif (has_capability('local/helpdesk:report', $context)) {
+            if (has_capability('local/helpdesk:report', $context)) {
                 $defaultscreen = 'tickets';
             }
         } else {
@@ -95,12 +79,12 @@ function has_assigned_issues($resolved = false): int
     if ($resolved) {
         $select .= '
             AND
-            status IN (' . RESOLVED . ',' . ABANDONNED . ',' . VALIDATED . ')
+            status IN (' . RESOLVED . ')
         ';
     } else {
         $select .= '
             AND
-            status NOT IN (' . RESOLVED . ',' . ABANDONNED . ',' . VALIDATED . ')
+            status NOT IN (' . RESOLVED . ')
         ';
     }
 
@@ -112,7 +96,7 @@ function has_assigned_issues($resolved = false): int
 
 function helpdesk_submit_issue_form(&$data): StdClass
 {
-    global $CFG, $DB, $USER;
+    global $DB, $USER;
 
     $issue = new StdClass();
     $issue -> datereported = time();
@@ -128,4 +112,19 @@ function helpdesk_submit_issue_form(&$data): StdClass
     }
 
     print_error('error_record_issue', 'local_helpdesk');
+}
+
+function helpdesk_get_status_keys()
+{
+    static $FULL_STATUS_KEYS;
+
+    if (!isset($FULL_STATUS_KEYS)){
+        $FULL_STATUS_KEYS = array(
+            OPEN => get_string('open', 'local_helpdesk'),
+            RESOLVING => get_string('resolving', 'local_helpdesk'),
+            RESOLVED => get_string('resolved', 'local_helpdesk')
+        );
+    }
+
+    return $FULL_STATUS_KEYS;
 }

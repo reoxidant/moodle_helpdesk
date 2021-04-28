@@ -46,13 +46,13 @@ echo $renderer -> tabs($view, $screen);
 
 if ($view === 'view') {
     switch ($screen) {
+        case 'tickets':
+            $resolved = 0;
+            include($CFG -> diroot . '/local/helpdesk/views/view_assigned_issues.php');
+            break;
         case 'browse':
             $resolved = 0;
             include($CFG -> dirroot . '/local/helpdesk/views/view_issues.php');
-            break;
-        case 'tickets':
-            $resolved = 0;
-            include($CFG -> diroot . '/local/helpdesk/views/view_tickets_list.php');
             break;
     }
 }
