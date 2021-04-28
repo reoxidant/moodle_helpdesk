@@ -157,7 +157,7 @@ if ($sort !== null) {
     $sql .= ' ORDER BY priority ASC';
 }
 
-$issue = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
+$issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
 
 $max_priority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
@@ -199,6 +199,15 @@ if (!empty($issues)) {
                 <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
             </a>";
     }
+
+    if (has_capability('local/helpdesk:manage', $context)) {
+        $actions .=
+            "&nbsp;<a href=\"view.php?issueid={$issue->id}&what=delete\" title=\"".get_string('delete')."\">
+                <img src =\"".$OUTPUT->pix_url('t/delete', 'core')."\" border=\"0\" />
+            </a>";
+    }
+
+
 }
 
 
