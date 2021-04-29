@@ -36,7 +36,7 @@ $PAGE -> set_url($url);
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
 if (($view === 'view') && $action !== '') {
-    $result = include($CFG -> dirroot . '/local/helpdesk/views/view_controller.php');
+    $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
 }
 
 echo $OUTPUT -> header();
@@ -48,13 +48,16 @@ if ($view === 'view') {
     switch ($screen) {
         case 'tickets':
             $resolved = 0;
-            include($CFG -> diroot . '/local/helpdesk/views/view_assigned_issues.php');
+            include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
             break;
         case 'browse':
             $resolved = 0;
-            include($CFG -> dirroot . '/local/helpdesk/views/view_issues.php');
+            include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
             break;
     }
+} else {
+    $resolved = 0;
+    include($CFG -> diroot . '/local/helpdesk/views/viewassignedtickets.php');
 }
 
 echo $OUTPUT -> box_end();
