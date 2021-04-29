@@ -8,9 +8,9 @@
 
 $string['pluginname'] = 'Центр поддержки';
 $string['view'] = 'Управление заявками';
-$string['resolved_plural'] = 'Закрыта';
+$string['resolvedplural'] = 'Закрыта';
 $string['profile'] = 'Профиль';
-$string['new_issue'] = 'Создать заявку';
+$string['newissue'] = 'Создать заявку';
 $string['issues'] = 'заявок решено';
 $string['reports'] = 'Обращения';
 $string['administration'] = 'Администрирование';
@@ -18,11 +18,11 @@ $string['tickets'] = 'Мои заявки';
 $string['browse'] = 'Все заявки';
 $string['search'] = 'Поиск заявок';
 $string['summary'] = 'Тема';
-$string['thanks_default'] = 'Спасибо за заявку! Наш менеджер свяжется с вами в ближайшее время.';
+$string['thanksdefault'] = 'Спасибо за заявку! Наш менеджер свяжется с вами в ближайшее время.';
 
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
 
-$string['error_cannot_submit_ticket'] = 'Ошибка регистрации новой заявки';
-$string['error_record_issue'] = 'Не удалось создать новую заявку';
+$string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
+$string['errorrecordissue'] = 'Не удалось создать новую заявку';
