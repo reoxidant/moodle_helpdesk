@@ -14,7 +14,7 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0)
 
     $result = true;
 
-    if ($oldversion < 2021042604) {
+    if ($oldversion < 2021042904) {
 
         // Define table helpdesk_issue to be created.
         $table = new xmldb_table('helpdesk_issue');
@@ -27,6 +27,9 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0)
         $table -> add_field('datereported', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table -> add_field('reportedby', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table -> add_field('status', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table -> add_field('assignedto', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('bywhomid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table -> add_field('priority', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table helpdesk_issue.
         $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
@@ -37,7 +40,7 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0)
         }
 
         // Helpdesk savepoint reached.
-        upgrade_plugin_savepoint(true, 2021042604, 'local', 'helpdesk');
+        upgrade_plugin_savepoint(true, 2021042904, 'local', 'helpdesk');
     }
 
     return $result;

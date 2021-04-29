@@ -9,7 +9,7 @@
 require('../../config.php');
 require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
-require_once($CFG -> dirroot . '/local/helpdesk/forms/report_issue_form.php');
+require_once($CFG -> dirroot . '/local/helpdesk/forms/reportissue_form.php');
 
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
@@ -21,7 +21,7 @@ require_capability('local/helpdesk:report', $context);
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
 
-$url = new moodle_url('/local/helpdesk/report_issue.php');
+$url = new moodle_url('/local/helpdesk/reportissue.php');
 
 $context = context_system ::instance();
 $PAGE -> set_context($context);
@@ -35,7 +35,7 @@ $form = new HelpDeskIssueForm($url);
 
 if (!$form -> is_cancelled() && $data = $form -> get_data()) {
     if (!$issue = helpdesk_submit_issue_form($data)) {
-        print_error('error_cannot_submit_ticket', 'local_helpdesk');
+        print_error('errorcannotsubmitticket', 'local_helpdesk');
     }
 
     $data = file_postupdate_standard_editor(
@@ -48,15 +48,17 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
         $data -> issueid
     );
 
+    $DB -> set_field('helpdesk_issue', 'description', $data -> description, array('id' => $issue -> id));
+
     $stc = new StdClass;
     $stc -> userid = $USER -> id;
     $stc -> issueid = $issue -> id;
     $stc -> timechange = time();
-    $stc -> statusfrom = POSTED;
-    $stc -> statusto = POSTED;
+    $stc -> statusfrom = OPEN;
+    $stc -> statusto = OPEN;
     echo $OUTPUT -> header();
     echo $OUTPUT -> box_start('generalbox', 'helpdesk-acknowledge');
-    echo get_string('thanks_default', 'local_helpdesk');
+    echo get_string('thanksdefault', 'local_helpdesk');
     echo $OUTPUT -> box_end();
     echo $OUTPUT -> continue_button(new moodle_url('/local/helpdesk/view.php', array('view' => 'view', 'screen' => 'browse')));
     echo $OUTPUT -> footer();
@@ -64,7 +66,7 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
 
 echo $OUTPUT -> header();
 
-$view = 'report_issue';
+$view = 'reportanissue';
 include_once($CFG -> dirroot . '/local/helpdesk/menus.php');
 
 $form -> display();

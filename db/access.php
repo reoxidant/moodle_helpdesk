@@ -7,7 +7,7 @@
  */
 
 $capabilities = array(
-    'local/helpdesk:view_issues' => array(
+    'local/helpdesk:viewissues' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
@@ -26,7 +26,7 @@ $capabilities = array(
         )
     ),
 
-    'local/helpdesk:view_reports' => array(
+    'local/helpdesk:viewreports' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(

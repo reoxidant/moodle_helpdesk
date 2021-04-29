@@ -8,37 +8,37 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$total_issues = 0;
-$total_resolved_issue = 0;
+$totalissues = 0;
+$totalresolvedissue = 0;
 
 /* if ($screen === 'tickets') {
-    //$total_issues = define in $DB->count_records_select
+    //$totalissues = define in $DB->count_records_select
 } elseif ($screen === 'work') {
-    //$total_issues = define in $DB->count_records_select
+    //$totalissues = define in $DB->count_records_select
 } else {
-    $total_issues = 0;
-    $total_resolved_issue = 0;
+    $totalissues = 0;
+    $totalresolvedissue = 0;
 }*/
 
 // Render Tabs with options for user.
 
 if (has_capability('local/helpdesk:report', $context)) {
-    $rows[0][] = new tabobject('report_issue', 'report_issue.php',
-        get_string('new_issue', 'local_helpdesk'));
+    $rows[0][] = new tabobject('reportanissue', 'reportissue.php',
+        get_string('newissue', 'local_helpdesk'));
 }
 
 $rows[0][] = new tabobject('view', 'view.php?view=view',
-    get_string('view', 'local_helpdesk') . ' (' . $total_issues . ' ' .
+    get_string('view', 'local_helpdesk') . ' (' . $totalissues . ' ' .
     get_string('issues', 'local_helpdesk') . ')');
 
 $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
-    get_string('resolved_plural', 'local_helpdesk') . ' (' . $total_resolved_issue . ' ' .
+    get_string('resolvedplural', 'local_helpdesk') . ' (' . $totalresolvedissue . ' ' .
     get_string('issues', 'local_helpdesk') . ')');
 
 $rows[0][] = new tabobject('profile', 'view.php?view=profile',
     get_string('profile', 'local_helpdesk'));
 
-if (has_capability('local/helpdesk:view_reports', $context)) {
+if (has_capability('local/helpdesk:viewreports', $context)) {
     $rows[0][] = new tabobject('reports', 'view.php?view=reports',
         get_string('reports', 'local_helpdesk'));
 }
@@ -54,14 +54,14 @@ $selected = null;
 $activated = null;
 switch ($view) {
     case 'view' :
-        if (!preg_match('/tickets|work|browse|search|view_issue|edit_issue/', $screen)) $screen = 'tickets';
+        if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) $screen = 'tickets';
         if (has_capability('local/helpdesk:report', $context)) {
             $rows[1][] = new tabobject('tickets', 'view.php?view=view&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
         }
-        if (has_assigned_issues()){
+        if (helpdesk_has_assigned_issues()) {
             $rows[1][] = new tabobject('work', 'view.php?view=view&amp;screen=work', get_string('work', 'local_helpdesk'));
         }
-        if(has_capability('local/helpdesk:view_issues', $context)){
+        if (has_capability('local/helpdesk:viewissues', $context)) {
             $rows[1][] = new tabobject('browse', 'view.php?view=view&amp;screen=browse', get_string('browse', 'local_helpdesk'));
         }
         $rows[1][] = new tabobject('search', 'view.php?view=view&amp;screen=search', get_string('search', 'local_helpdesk'));
@@ -76,7 +76,7 @@ switch ($view) {
         if (!preg_match('/status|evolution|print/', $screen)) $screen = 'status';
         break;
     case 'admin':
-        if (!preg_match('/summary|manage_elements|manage_network/', $screen)) $screen = 'summary';
+        if (!preg_match('/summary|manageelements|managenetwork/', $screen)) $screen = 'summary';
         break;
     default:
 }
@@ -88,4 +88,4 @@ if (!empty($screen)) {
 echo $OUTPUT -> container_start('local-header helpdesk-tabs');
 print_tabs($rows, $selected, '', $activated);
 echo '<br/>';
-echo $OUTPUT->container_end();
+echo $OUTPUT -> container_end();

@@ -12,9 +12,9 @@ const OPEN = 1;
 const RESOLVING = 2;
 const RESOLVED = 3;
 
-global $STATUS_CODES;
+global $STATUSCODES;
 
-$STATUS_CODES = array(
+$STATUSCODES = array(
     OPEN => 'open',
     RESOLVING => 'resolving',
     RESOLVED => 'resolved'
@@ -67,7 +67,7 @@ function helpdesk_resolve_view()
     return $view;
 }
 
-function has_assigned_issues($resolved = false): int
+function helpdesk_has_assigned_issues($resolved = false): int
 {
     global $DB, $USER;
 
@@ -99,32 +99,37 @@ function helpdesk_submit_issue_form(&$data): StdClass
     global $DB, $USER;
 
     $issue = new StdClass();
-    $issue -> datereported = time();
     $issue -> summary = $data -> summary;
     $issue -> description = $data -> description_editor['text'];
     $issue -> descriptionformat = $data -> description_editor['format'];
-    $issue -> status = POSTED;
+    $issue -> datereported = time();
     $issue -> reportedby = $USER -> id;
+    $issue -> status = OPEN;
+    $issue -> assignedto = 0;
+    $issue -> bywhomid = 0;
+
+    $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
+    $issue -> priority = $maxpriority + 1;
 
     if ($issue -> id = $DB -> insert_record('helpdesk_issue', $issue)) {
         $data -> issueid = $issue -> id;
         return $issue;
     }
 
-    print_error('error_record_issue', 'local_helpdesk');
+    print_error('errorrecordissue', 'local_helpdesk');
 }
 
 function helpdesk_get_status_keys()
 {
-    static $FULL_STATUS_KEYS;
+    static $FULLSTATUSKEYS;
 
-    if (!isset($FULL_STATUS_KEYS)){
-        $FULL_STATUS_KEYS = array(
+    if (!isset($FULLSTATUSKEYS)) {
+        $FULLSTATUSKEYS = array(
             OPEN => get_string('open', 'local_helpdesk'),
             RESOLVING => get_string('resolving', 'local_helpdesk'),
             RESOLVED => get_string('resolved', 'local_helpdesk')
         );
     }
 
-    return $FULL_STATUS_KEYS;
+    return $FULLSTATUSKEYS;
 }
