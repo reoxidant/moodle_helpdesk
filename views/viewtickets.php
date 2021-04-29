@@ -22,14 +22,12 @@ if ($page <= 0) {
 }
 
 if ($resolved) {
-    $resolved_clause = ' AND
-       (status = ' . RESOLVED . ' OR
-       status = ' . ABANDONNED . ')
+    $resolvedclause = ' AND
+       (status = ' . RESOLVED . ')
     ';
 } else {
-    $resolved_clause = ' AND
-        status <> ' . RESOLVED . ' AND
-        status <> ' . ABANDONNED . '
+    $resolvedclause = ' AND
+        status <> ' . RESOLVED . '
     ';
 }
 
@@ -50,7 +48,7 @@ $sql = "
             i.reportedby = u.id
         WHERE
             i.reportedby = u.id AND
-            $resolved_clause
+            $resolvedclause
         GROUP BY
             i.id,
             i.summary,
@@ -69,7 +67,7 @@ $sqlcount = "
             {user} u
         WHERE
             i.reportedby = u.id AND
-            $resolved_clause
+            $resolvedclause
     ";
 
 $numrecords = $DB -> count_records_sql($sqlcount)
@@ -84,36 +82,36 @@ $numrecords = $DB -> count_records_sql($sqlcount)
 //Define table object.
 
 $priority = get_string('priority', 'tracker');
-$issue_number = get_string('issue_number', 'local_helpdesk');
+$issuenumber = get_string('issuenumber', 'local_helpdesk');
 $summary = get_string('summary', 'local_helpdesk');
-$datereported = get_string('date_reported', 'local_helpdesk');
+$datereported = get_string('datereported', 'local_helpdesk');
 $reportedby = get_string('reported', 'local_helpdesk');
-$assigned = get_string('assigned', 'local_helpdesk');
+$assignedto = get_string('assignedto', 'local_helpdesk');
 $status = get_string('status', 'local_helpdesk');
 $watches = get_string('watches', 'local_helpdesk');
 $action = '';
 
 if ($resolved) {
-    $tablecolumns = array('id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
+    $tablecolumns = array('id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'watches', 'action');
     $tableheaders = array(
-        "<b>$issue_number</b>",
+        "<b>$issuenumber</b>",
         "<b>$summary</b>",
         "<b>$datereported</b>",
         "<b>$reportedby</b>",
-        "<b>$assigned</b>",
+        "<b>$assignedto</b>",
         "<b>$status</b>",
         "<b>$watches</b>",
         "<b>$action</b>"
     );
 } else {
-    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
+    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'watches', 'action');
     $tableheaders = array(
         "<b>$priority</b>",
-        "<b>$issue_number</b>",
+        "<b>$issuenumber</b>",
         "<b>$summary</b>",
         "<b>$datereported</b>",
         "<b>$reportedby</b>",
-        "<b>$assigned</b>",
+        "<b>$assignedto</b>",
         "<b>$status</b>",
         "<b>$watches</b>",
         "<b>$action</b>"
@@ -132,15 +130,15 @@ $table -> initialbars(true);
 
 $table -> set_attribute('cellspacing', '0');
 $table -> set_attribute('id', 'issues');
-$table -> set_attribute('class', 'listissue');
+$table -> set_attribute('class', 'issuelist');
 $table -> set_attribute('width', '100%');
 
 $table -> set_attribute('priority', 'list_priority');
 $table -> set_attribute('id', 'list_issue_number');
 $table -> set_attribute('summary', 'list_summary');
-$table -> set_attribute('datereported', 'time_label');
+$table -> set_attribute('datereported', 'timelabel');
 $table -> set_attribute('reportedby', 'list_reportedby');
-$table -> set_attribute('assigned', 'list_assigned');
+$table -> set_attribute('assignedto', 'list_assignedto');
 $table -> set_attribute('watches', 'list_watches');
 $table -> set_attribute('status', 'list_status');
 $table -> set_attribute('action', 'list_action');
@@ -164,7 +162,7 @@ $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
-        $issue_number = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
+        $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
         $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
@@ -174,11 +172,11 @@ if (!empty($issues)) {
 
         $reportedby = fullname($user);
 
-        $assigned = '';
+        $assignedto = '';
 
-        $user = $DB -> get_record('user', array('id' => $issue -> assigned));
+        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
-        $status_code = $STATUS_CODES[$issue -> status];
+        $status_code = $STATUSCODES[$issue -> status];
 
         $status = '<div class=\"status_' . $status_code . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
 

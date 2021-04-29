@@ -20,14 +20,12 @@ if ($page <= 0) {
 }
 
 if ($resolved) {
-    $resolved_clause = ' AND
-       (status = ' . RESOLVED . ' OR
-       status = ' . ABANDONNED . ')
+    $resolvedclause = ' AND
+       (status = ' . RESOLVED . ')
     ';
 } else {
-    $resolved_clause = ' AND
-        status <> ' . RESOLVED . ' AND
-        status <> ' . ABANDONNED . '
+    $resolvedclause = ' AND
+        status <> ' . RESOLVED . '
     ';
 }
 
@@ -36,19 +34,22 @@ $sql = "
             i.id,
             i.summary,
             i.datereported,
-            i.reportedby,
-            i.status
+            i.assignedto,
+            i.status,
+            i.status,
+            i.priority
         FROM
             {helpdesk_issue} i
         WHERE
             i.reportedby = {$USER->id} AND
-            $resolved_clause
+            $resolvedclause
         GROUP BY
             i.id,
             i.summary,
             i.datereported,
-            i.reportedby,
-            i.status
+            i.assignedto,
+            i.status,
+            i.priority
     ";
 
 $sqlcount = "
@@ -58,7 +59,7 @@ $sqlcount = "
             {helpdesk_issue} i
         WHERE
             i.reportedby = {$USER->id} AND
-            $resolved_clause
+            $resolvedclause
     ";
 
 $numrecords = $DB -> count_records_sql($sqlcount);
@@ -73,40 +74,40 @@ $numrecords = $DB -> count_records_sql($sqlcount);
 //Define table object.
 
 $priority = get_string('priority', 'local_helpdesk');
-$issue_number = get_string('issue_number', 'local_helpdesk');
+$issuenumber = get_string('issuenumber', 'local_helpdesk');
 $summary = get_string('summary', 'local_helpdesk');
-$datereported = get_string('date_reported', 'local_helpdesk');
-$assigned = get_string('assigned', 'local_helpdesk');
+$datereported = get_string('datereported', 'local_helpdesk');
+$assignedto = get_string('assignedto', 'local_helpdesk');
 $status = get_string('status', 'local_helpdesk');
 $watches = get_string('watches', 'local_helpdesk');
 $action = '';
 
 if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
-    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'assigned', 'status', 'watches', 'action');
+    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'assignedto', 'status', 'watches', 'action');
     $tableheaders = array(
         "<b>$priority</b>",
         '',
         "<b>$summary</b>",
         "<b>$datereported</b>",
-        "<b>$assigned</b>",
+        "<b>$assignedto</b>",
         "<b>$status</b>",
         "<b>$watches</b>",
         "<b>$action</b>"
     );
 } else {
-    $tablecolumns = array('id', 'summary', 'datereported', 'assigned', 'status', 'watches', 'action');
+    $tablecolumns = array('id', 'summary', 'datereported', 'assignedto', 'status', 'watches', 'action');
     $tableheaders = array(
         '',
         "<b>$summary</b>",
         "<b>$datereported</b>",
-        "<b>$assigned</b>",
+        "<b>$assignedto</b>",
         "<b>$status</b>",
         "<b>$watches</b>",
         "<b>$action</b>"
     );
 }
 
-$table = new flexible_table('local-helpdesk-issue-list');
+$table = new flexible_table('local-helpdesk-issuelist');
 $table -> define_columns($tablecolumns);
 $table -> define_headers($tableheaders);
 
@@ -125,7 +126,7 @@ $table -> set_attribute('priority', 'list_priority');
 $table -> set_attribute('id', 'list_issuenumber');
 $table -> set_attribute('summary', 'list_summary');
 $table -> set_attribute('datereported', 'timelabel');
-$table -> set_attribute('assigned', 'list_assigned');
+$table -> set_attribute('assignedto', 'list_assignedto');
 $table -> set_attribute('watches', 'list_watches');
 $table -> set_attribute('status', 'list_status');
 $table -> set_attribute('action', 'list_action');
@@ -143,24 +144,24 @@ if ($sort !== null) {
 $issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
 $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
-$FULL_STATUS_KEYS = helpdesk_get_status_keys();
+$FULLSTATUSKEYS = helpdesk_get_status_keys();
 
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
-        $issue_number = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
+        $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
         $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
         $datereported = date("Y/m/d H:i, $issue->datereported");
 
-        $user = $DB -> get_record('user', array('id' => $issue -> assigned));
+        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
         if (has_capability('local/helpdesk:manage', $context)) {
-           $status = $FULL_STATUS_KEYS[0 + $issue->status];
+            $status = $FULLSTATUSKEYS[0 + $issue -> status];
         }
 
-        $status = '<div class=\"status_' . $status_code . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
+        $status = '<div class=\"status_' . $STATUSCODES[$issue -> status] . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
 
         $hasresolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
@@ -172,43 +173,43 @@ if (!empty($issues)) {
 
         $actions = '';
 
-        if(
-                has_capability('local/helpdesk:manage', $context)
+        if (
+            has_capability('local/helpdesk:manage', $context)
             ||
-                has_capability('local/helpdesk:resolve', $context)
-        ){
+            has_capability('local/helpdesk:resolve', $context)
+        ) {
             $actions = "
-            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"".get_string('update')."\" >
-                <img src =\"".$OUTPUT->pix_url('t/edit', 'core')."\" border=\"0\" />
+            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
+                <img src =\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
             </a>";
         }
 
-        if(
-            has_capability('local/helpdesk:manage', $context)
-        ){
+        if (
+        has_capability('local/helpdesk:manage', $context)
+        ) {
             $actions = "&nbsp;
-            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"".get_string('delete')."\" >
-                <img src =\"".$OUTPUT->pix_url('t/delete', 'core')."\" border=\"0\" />
+            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
+                <img src =\"" . $OUTPUT -> pix_url('t/delete', 'core') . "\" border=\"0\" />
             </a>";
         }
 
         if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
-            $ticker_priority = ($issue->status < RESOLVED) ? $maxpriority - $issue->priority + 1 : '';
-            $dataset = array();
+            $ticketpriority = ($issue -> status < RESOLVED) ? $maxpriority - $issue -> priority + 1 : '';
+            $dataset = array($ticketpriority, $issuenumber, $summary . '' . $solution, $datereported, $assignedto, $status, 0 + $issue -> watches, $actions);
         } else {
-            $dataset = array();
+            $dataset = array($issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, 0 + $issue -> watches, $actions);
         }
-        $table->add_data($dataset);
+        $table -> add_data($dataset);
     }
-    $table->finish_html();
+    $table -> finish_html();
 
     echo '<div style=\"text-align: center;\">';
-    echo '<p><input type=\"submit\" name=\"gobtn\" value=\"'.get_string('savechanges').'\" /> </p>';
+    echo '<p><input type=\"submit\" name=\"gobtn\" value=\"' . get_string('savechanges') . '\" /> </p>';
     echo '</div>';
 } else {
     echo '<br/>';
     echo '<br/>';
-    echo $OUTPUT->notification(get_string('notickets', 'local_helpdesk'), 'box generalbox', 'notice');
+    echo $OUTPUT -> notification(get_string('notickets', 'local_helpdesk'), 'box generalbox', 'notice');
 }
 
 echo '</form>';
