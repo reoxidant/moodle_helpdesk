@@ -61,7 +61,7 @@ $sql = "
             u.lastname
     ";
 
-$sql_count = "
+$sqlcount = "
         SELECT
             COUNT(*)
         FROM
@@ -72,7 +72,7 @@ $sql_count = "
             $resolved_clause
     ";
 
-$num_records = $DB -> count_records_sql($sql_count)
+$numrecords = $DB -> count_records_sql($sqlcount)
 ?>
 
     <form name="manageform" action="view.php" method="post">
@@ -94,8 +94,8 @@ $watches = get_string('watches', 'local_helpdesk');
 $action = '';
 
 if ($resolved) {
-    $table_columns = array('id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
-    $table_headers = array(
+    $tablecolumns = array('id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
+    $tableheaders = array(
         "<b>$issue_number</b>",
         "<b>$summary</b>",
         "<b>$datereported</b>",
@@ -106,8 +106,8 @@ if ($resolved) {
         "<b>$action</b>"
     );
 } else {
-    $table_columns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
-    $table_headers = array(
+    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assigned', 'status', 'watches', 'action');
+    $tableheaders = array(
         "<b>$priority</b>",
         "<b>$issue_number</b>",
         "<b>$summary</b>",
@@ -121,8 +121,8 @@ if ($resolved) {
 }
 
 $table = new flexible_table('local-helpdesk-issue-list');
-$table -> define_columns($table_columns);
-$table -> define_headers($table_headers);
+$table -> define_columns($tablecolumns);
+$table -> define_headers($tableheaders);
 
 $table -> define_baseurl(new moodle_url('/local/helpdesk/view.php', array('view' => $view, 'screen' => $screen)));
 
@@ -132,7 +132,7 @@ $table -> initialbars(true);
 
 $table -> set_attribute('cellspacing', '0');
 $table -> set_attribute('id', 'issues');
-$table -> set_attribute('class', 'list_issue');
+$table -> set_attribute('class', 'listissue');
 $table -> set_attribute('width', '100%');
 
 $table -> set_attribute('priority', 'list_priority');
@@ -149,7 +149,7 @@ $table -> setup();
 
 $where = $table -> get_sql_where();
 $sort = $table -> get_sql_sort();
-$table -> pagesize($limit, $num_records);
+$table -> pagesize($limit, $numrecords);
 
 if ($sort !== null) {
     $sql .= " ORDER BY $sort";
@@ -159,14 +159,14 @@ if ($sort !== null) {
 
 $issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
 
-$max_priority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
+$maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
         $issue_number = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
-        $summary = "<a href=\"view.php?view=view&amp;screen=view_issue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
+        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
         $datereported = date("Y/m/d H:i, $issue->datereported");
 
@@ -182,12 +182,12 @@ if (!empty($issues)) {
 
         $status = '<div class=\"status_' . $status_code . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
 
-        $has_resolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
+        $hasresolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
-        $solution = ($has_resolution) ?
+        $solution = ($hasresolution) ?
             "<img src=\"" . $OUTPUT -> pix_url('solution', 'helpdesk') . "\" 
                   height='15' 
-                  alt=\"" . get_string('has_resolution', 'local_helpdesk') . "\" 
+                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" 
             />" : '';
 
         $actions = '';
@@ -195,7 +195,7 @@ if (!empty($issues)) {
 
     if (has_capability('local/helpdesk:manage', $context) || has_capability('local/helpdesk:resolve', $context)) {
         $actions =
-            "<a href=\"view.php?view=view&amp;issueid=" . $issue -> id . "&screen=edit_issue\" title = \"" . get_string('update') . "\">
+            "<a href=\"view.php?view=view&amp;issueid=" . $issue -> id . "&screen=editanissue\" title = \"" . get_string('update') . "\">
                 <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
             </a>";
     }

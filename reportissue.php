@@ -21,7 +21,7 @@ require_capability('local/helpdesk:report', $context);
 
 $pluginname = get_string('pluginname', 'local_helpdesk');
 
-$url = new moodle_url('/local/helpdesk/report_issue.php');
+$url = new moodle_url('/local/helpdesk/reportissue.php');
 
 $context = context_system ::instance();
 $PAGE -> set_context($context);
@@ -35,7 +35,7 @@ $form = new HelpDeskIssueForm($url);
 
 if (!$form -> is_cancelled() && $data = $form -> get_data()) {
     if (!$issue = helpdesk_submit_issue_form($data)) {
-        print_error('error_cannot_submit_ticket', 'local_helpdesk');
+        print_error('errorcannotsubmitticket', 'local_helpdesk');
     }
 
     $data = file_postupdate_standard_editor(
@@ -56,7 +56,7 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
     $stc -> statusto = POSTED;
     echo $OUTPUT -> header();
     echo $OUTPUT -> box_start('generalbox', 'helpdesk-acknowledge');
-    echo get_string('thanks_default', 'local_helpdesk');
+    echo get_string('thanksdefault', 'local_helpdesk');
     echo $OUTPUT -> box_end();
     echo $OUTPUT -> continue_button(new moodle_url('/local/helpdesk/view.php', array('view' => 'view', 'screen' => 'browse')));
     echo $OUTPUT -> footer();
@@ -64,7 +64,7 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
 
 echo $OUTPUT -> header();
 
-$view = 'report_issue';
+$view = 'reportissue';
 include_once($CFG -> dirroot . '/local/helpdesk/menus.php');
 
 $form -> display();
