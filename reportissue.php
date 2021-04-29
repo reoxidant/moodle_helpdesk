@@ -9,7 +9,7 @@
 require('../../config.php');
 require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
-require_once($CFG -> dirroot . '/local/helpdesk/forms/report_issue_form.php');
+require_once($CFG -> dirroot . '/local/helpdesk/forms/reportissue_form.php');
 
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
@@ -48,12 +48,14 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
         $data -> issueid
     );
 
+    $DB -> set_field('helpdesk_issue', 'description', $data -> description, array('id' => $issue -> id));
+
     $stc = new StdClass;
     $stc -> userid = $USER -> id;
     $stc -> issueid = $issue -> id;
     $stc -> timechange = time();
-    $stc -> statusfrom = POSTED;
-    $stc -> statusto = POSTED;
+    $stc -> statusfrom = OPEN;
+    $stc -> statusto = OPEN;
     echo $OUTPUT -> header();
     echo $OUTPUT -> box_start('generalbox', 'helpdesk-acknowledge');
     echo get_string('thanksdefault', 'local_helpdesk');
@@ -64,7 +66,7 @@ if (!$form -> is_cancelled() && $data = $form -> get_data()) {
 
 echo $OUTPUT -> header();
 
-$view = 'reportissue';
+$view = 'reportanissue';
 include_once($CFG -> dirroot . '/local/helpdesk/menus.php');
 
 $form -> display();
