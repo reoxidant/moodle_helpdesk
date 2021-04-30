@@ -36,12 +36,11 @@ $sql = "
             i.datereported,
             i.assignedto,
             i.status,
-            i.status,
             i.priority
         FROM
             {helpdesk_issue} i
         WHERE
-            i.reportedby = {$USER->id} AND
+            i.reportedby = {$USER->id}
             $resolvedclause
         GROUP BY
             i.id,
@@ -58,7 +57,7 @@ $sqlcount = "
         FROM
             {helpdesk_issue} i
         WHERE
-            i.reportedby = {$USER->id} AND
+            i.reportedby = {$USER->id}
             $resolvedclause
     ";
 
@@ -79,7 +78,6 @@ $summary = get_string('summary', 'local_helpdesk');
 $datereported = get_string('datereported', 'local_helpdesk');
 $assignedto = get_string('assignedto', 'local_helpdesk');
 $status = get_string('status', 'local_helpdesk');
-$watches = get_string('watches', 'local_helpdesk');
 $action = '';
 
 if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
@@ -91,7 +89,6 @@ if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
         "<b>$datereported</b>",
         "<b>$assignedto</b>",
         "<b>$status</b>",
-        "<b>$watches</b>",
         "<b>$action</b>"
     );
 } else {
@@ -102,7 +99,6 @@ if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
         "<b>$datereported</b>",
         "<b>$assignedto</b>",
         "<b>$status</b>",
-        "<b>$watches</b>",
         "<b>$action</b>"
     );
 }
@@ -127,7 +123,6 @@ $table -> set_attribute('id', 'list_issuenumber');
 $table -> set_attribute('summary', 'list_summary');
 $table -> set_attribute('datereported', 'timelabel');
 $table -> set_attribute('assignedto', 'list_assignedto');
-$table -> set_attribute('watches', 'list_watches');
 $table -> set_attribute('status', 'list_status');
 $table -> set_attribute('action', 'list_action');
 
@@ -180,7 +175,7 @@ if (!empty($issues)) {
         ) {
             $actions = "
             <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
-                <img src =\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
+                <img src =\"" . $OUTPUT -> image_url ('t/edit', 'core') . "\" border=\"0\" />
             </a>";
         }
 
@@ -189,22 +184,22 @@ if (!empty($issues)) {
         ) {
             $actions = "&nbsp;
             <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
-                <img src =\"" . $OUTPUT -> pix_url('t/delete', 'core') . "\" border=\"0\" />
+                <img src =\"" . $OUTPUT -> image_url ('t/delete', 'core') . "\" border=\"0\" />
             </a>";
         }
 
         if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
             $ticketpriority = ($issue -> status < RESOLVED) ? $maxpriority - $issue -> priority + 1 : '';
-            $dataset = array($ticketpriority, $issuenumber, $summary . '' . $solution, $datereported, $assignedto, $status, 0 + $issue -> watches, $actions);
+            $dataset = array($ticketpriority, $issuenumber, $summary . '' . $solution, $datereported, $assignedto, $status, $actions);
         } else {
-            $dataset = array($issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, 0 + $issue -> watches, $actions);
+            $dataset = array($issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions);
         }
         $table -> add_data($dataset);
     }
     $table -> finish_html();
 
-    echo '<div style=\"text-align: center;\">';
-    echo '<p><input type=\"submit\" name=\"gobtn\" value=\"' . get_string('savechanges') . '\" /> </p>';
+    echo '<div style="text-align: center;">';
+    echo '<p><input type="submit" name="go_btn" value="' . get_string('savechanges') . '" /> </p>';
     echo '</div>';
 } else {
     echo '<br/>';

@@ -19,6 +19,11 @@ $string['browse'] = 'Все заявки';
 $string['search'] = 'Поиск заявок';
 $string['summary'] = 'Тема';
 $string['thanksdefault'] = 'Спасибо за заявку! Наш менеджер свяжется с вами в ближайшее время.';
+$string['assignedto'] = 'Назначена';
+$string['status'] = 'Статус';
+$string['datereported'] = 'Дата назначения';
+$string['priority'] = 'Приоритет';
+$string['issuenumber'] = 'Заявка';
 
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
