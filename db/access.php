@@ -7,10 +7,50 @@
  */
 
 $capabilities = array(
-    'local/helpdesk:viewissues' => array(
+
+    'local/helpdesk:viewallissues' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_MODULE,
         'archetype' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'local/helpdesk:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetype' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'local/helpdesk:managepriority' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetype' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'local/helpdesk:viewpriority' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetype' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'local/helpdesk:resolve' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetype' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
     ),
@@ -26,7 +66,7 @@ $capabilities = array(
         )
     ),
 
-    'local/helpdesk:viewreports' => array(
+    'local/helpdesk:configure' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
@@ -35,7 +75,7 @@ $capabilities = array(
         )
     ),
 
-    'local/helpdesk:configure' => array(
+    'local/helpdesk:viewreports' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetype' => array(
