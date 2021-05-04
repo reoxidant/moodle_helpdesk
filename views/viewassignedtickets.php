@@ -64,7 +64,7 @@ $sqlcount = "
 $numrecords = $DB -> count_records_sql($sqlcount);
 ?>
 
-    <form name="manageform" action="view.php" method="post">
+    <form name="manageform" action="../view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
         <input type="hidden" name="view" value="resolved"/>
 
@@ -188,7 +188,7 @@ if (!empty($issues)) {
         ) {
             $actions =
                 "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
-                    <img src =\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" border=\"0\" />
+                    <img src =\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' />
                 </a>";
         }
 
@@ -197,7 +197,7 @@ if (!empty($issues)) {
         ) {
             $actions .=
                 "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
-                    <img src =\"" . $OUTPUT -> image_url('t/delete', 'core') . "\" border=\"0\" />
+                    <img src =\"" . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' />
                 </a>";
         }
 
