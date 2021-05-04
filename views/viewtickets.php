@@ -31,7 +31,7 @@ if ($resolved) {
     ';
 }
 
-$sql = "
+$sql = '
         SELECT
             i.id,
             i.summary,
@@ -40,16 +40,16 @@ $sql = "
             i.status,
             u.firstname firstname,
             u.lastname lastname
-        FROM
-            {helpdesk_issue} i
+        FROM            
+        {helpdesk_issue} i
         LEFT JOIN
             {user} u
         ON
             i.reportedby = u.id
         WHERE
             i.reportedby = u.id AND
-            $resolvedclause
-        GROUP BY
+            ' . $resolvedclause . '        
+            GROUP BY
             i.id,
             i.summary,
             i.datereported,
@@ -57,9 +57,9 @@ $sql = "
             i.status,
             u.firstname,
             u.lastname
-    ";
+    ';
 
-$sqlcount = "
+$sqlcount = '
         SELECT
             COUNT(*)
         FROM
@@ -68,12 +68,12 @@ $sqlcount = "
         WHERE
             i.reportedby = u.id AND
             $resolvedclause
-    ";
+    ';
 
 $numrecords = $DB -> count_records_sql($sqlcount)
 ?>
 
-    <form name="manageform" action="view.php" method="post">
+    <form name="manageform" action="../view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
         <input type="hidden" name="view" value="view"/>
         <input type="hidden" name="screen" value="browse"/>
@@ -118,7 +118,7 @@ if ($resolved) {
     );
 }
 
-$table = new flexible_table('local-helpdesk-issue-list');
+$table = new flexible_table('local-helpdesk-issuelist');
 $table -> define_columns($tablecolumns);
 $table -> define_headers($tableheaders);
 
@@ -194,18 +194,16 @@ if (!empty($issues)) {
     if (has_capability('local/helpdesk:manage', $context) || has_capability('local/helpdesk:resolve', $context)) {
         $actions =
             "<a href=\"view.php?view=view&amp;issueid=" . $issue -> id . "&screen=editanissue\" title = \"" . get_string('update') . "\">
-                <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" border=\"0\" />
+                <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" alt='edit'/>
             </a>";
     }
 
     if (has_capability('local/helpdesk:manage', $context)) {
         $actions .=
-            "&nbsp;<a href=\"view.php?issueid={$issue->id}&what=delete\" title=\"".get_string('delete')."\">
-                <img src =\"".$OUTPUT->pix_url('t/delete', 'core')."\" border=\"0\" />
+            "<a href=\"view.php?issueid={$issue->id}&what=delete\" title=\"" . get_string('delete') . "\">
+                <img src =\"" . $OUTPUT -> pix_url('t/delete', 'core') . "\" alt='delete'/>
             </a>";
     }
-
-
 }
 
 

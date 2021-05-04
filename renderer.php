@@ -40,6 +40,10 @@ class local_helpdesk_renderer extends plugin_renderer_base
 
         // Render Tabs with options for user.
 
+        if ($context === null) {
+            die('context is null');
+        }
+
         if (has_capability('local/helpdesk:report', $context)) {
             $rows[0][] = new tabobject('reportanissue', 'reportissue.php', get_string('newissue', 'local_helpdesk'));
         }
@@ -53,17 +57,13 @@ class local_helpdesk_renderer extends plugin_renderer_base
 
         $rows[0][] = new tabobject('profile', 'view.php?view=profile', get_string('profile', 'local_helpdesk'));
 
-        if (has_capability('local/helpdesk:viewreports', $context)) {
-            $rows[0][] = new tabobject('reports', 'view.php?view=reports', get_string('reports', 'local_helpdesk'));
-        }
-
         if (has_capability('local/helpdesk:configure', $context)) {
             $rows[0][] = new tabobject('admin', 'view.php?view=admin', get_string('administration', 'local_helpdesk'));
         }
 
         // Render Subtabs
 
-        $selected = null;
+//        $selected = null;
         $activated = null;
         switch ($view) {
             case 'view' :
