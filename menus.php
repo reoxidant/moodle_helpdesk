@@ -38,11 +38,6 @@ $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
 $rows[0][] = new tabobject('profile', 'view.php?view=profile',
     get_string('profile', 'local_helpdesk'));
 
-if (has_capability('local/helpdesk:viewreports', $context)) {
-    $rows[0][] = new tabobject('reports', 'view.php?view=reports',
-        get_string('reports', 'local_helpdesk'));
-}
-
 if (has_capability('local/helpdesk:configure', $context)) {
     $rows[0][] = new tabobject('admin', 'view.php?view=admin',
         get_string('administration', 'local_helpdesk'));

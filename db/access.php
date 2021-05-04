@@ -73,14 +73,5 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
         )
-    ),
-
-    'local/helpdesk:viewreports' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetype' => array(
-            'manager' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-        )
-    ),
+    )
 );
