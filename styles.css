@@ -1,0 +1,78 @@
+.status_open{
+    background-color: #FF8000;
+    color: black;
+    font-weight: bold;
+}
+
+.status_resolving{
+    background-color: #FCDD03;
+    color: black;
+    font-weight: bold;
+}
+
+.status_resolved{
+    background-color: #2EAA20;
+    color: white;
+    font-weight: bold;
+}
+
+.list_priority{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: 0.9em;
+}
+
+.list_issuenumber{
+    text-align: left;
+    vertical-align: bottom;
+    font-size: 0.9em;
+}
+
+.list_summary{
+    text-align: left ;
+    vertical-align: bottom;
+    font-size: 0.9em;
+    width: 40%;
+    padding: 2px;
+}
+
+.list_reportedby{
+    text-align: left;
+    vertical-align: bottom;
+    font-size: 0.9em ;
+    color: #4D4D4D;
+    width:10%;
+}
+
+.list_assignedto{
+    text-align: left;
+    vertical-align: bottom;
+    font-size: 0.9em;
+    color: #4D4D4D;
+    width: 10%;
+}
+
+.list_watches{
+    text-align: center;
+    vertical-align: bottom;
+    width: 5%;
+}
+
+.list_status{
+    text-align: center;
+    vertical-align: bottom;
+    width: 5%;
+}
+
+.list_action{
+    text-align: center;
+    vertical-align: bottom;
+    width: 5%;
+}
+
+#helpdesk-acknowledge{
+    margin:50px;
+    border:1px #c0c0c0 solid;
+    padding:30px;
+    font-size:1.2em;
+}
