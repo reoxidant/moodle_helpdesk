@@ -18,6 +18,19 @@ $view = helpdesk_resolve_view();
 
 $url = new moodle_url('/local/helpdesk/view.php', ['view' => $view, 'screen' => $screen]);
 
+// Redirect
+
+if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen === 'editanissue') && empty($issueid)) {
+    redirect(new moodle_url('/local/helpdesk/view.php'), ['view' => 'view', 'screen' => 'browse']);
+}
+
+if($issueid){
+    $view = 'view';
+    if(empty($screen)) {
+        $screen = 'viewanissue';
+    }
+}
+
 if (!isloggedin() or isguestuser()) {
     require_login();
     die;
