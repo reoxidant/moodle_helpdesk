@@ -140,31 +140,44 @@ $issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table 
 $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
 $FULLSTATUSKEYS = helpdesk_get_status_keys();
+$STATUSKEYS = helpdesk_get_status_keys();
 
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
         $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
-        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
+        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">"
+            . format_string($issue -> summary) .
+            '</a>';
 
-        $datereported = date("Y/m/d H:i, $issue->datereported");
+        $datereported = date('Y/m/d H:i', $issue -> datereported);
 
         $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
         if (has_capability('local/helpdesk:manage', $context)) {
-            $status = $FULLSTATUSKEYS[0 + $issue -> status];
+            $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
+                html_writer ::select(
+                        $STATUSKEYS, "status{$issue->id}", 0, [],
+                        ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"
+                ]);
+            $assignedto = html_writer ::select(
+                [], "assignedto{$issue->id}", $issue -> assignedto, ['' => get_string('unassigned', 'local_helpdesk')],
+                ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
+            );
         }
 
-        $status = '<div class=\"status_' . $STATUSCODES[$issue -> status] . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
+        $status =
+            '<div class=status_' . $STATUSCODES[$issue -> status] . ' style="width: 110%; height:105%; text-align: center">'
+            . $status .
+            '</div>';
 
         $hasresolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
         $solution = ($hasresolution) ?
-            "<img src=\"" . $OUTPUT -> pix_url('solution', 'helpdesk') . "\" 
-                  height='15' 
-                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" 
-            />" : '';
+            "<img src=\""
+            . $OUTPUT -> pix_url('solution', 'helpdesk') .
+            "\" height='15' alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" />" : '';
 
         $actions = '';
 
@@ -173,26 +186,26 @@ if (!empty($issues)) {
             ||
             has_capability('local/helpdesk:resolve', $context)
         ) {
-            $actions = "
-            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
-                <img src =\"" . $OUTPUT -> image_url ('t/edit', 'core') . "\" border=\"0\" />
-            </a>";
+            $actions =
+                "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
+                    <img src =\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" border=\"0\" />
+                </a>";
         }
 
         if (
         has_capability('local/helpdesk:manage', $context)
         ) {
-            $actions = "&nbsp;
-            <a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
-                <img src =\"" . $OUTPUT -> image_url ('t/delete', 'core') . "\" border=\"0\" />
-            </a>";
+            $actions .=
+                "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
+                    <img src =\"" . $OUTPUT -> image_url('t/delete', 'core') . "\" border=\"0\" />
+                </a>";
         }
 
         if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
             $ticketpriority = ($issue -> status < RESOLVED) ? $maxpriority - $issue -> priority + 1 : '';
-            $dataset = array($ticketpriority, $issuenumber, $summary . '' . $solution, $datereported, $assignedto, $status, $actions);
+            $dataset = [$ticketpriority, $issuenumber, $summary . '' . $solution, $datereported, $assignedto, $status, $actions];
         } else {
-            $dataset = array($issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions);
+            $dataset = [$issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions];
         }
         $table -> add_data($dataset);
     }
