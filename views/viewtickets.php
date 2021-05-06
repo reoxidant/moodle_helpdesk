@@ -37,11 +37,13 @@ $sql = '
             i.summary,
             i.datereported,
             i.reportedby,
+            i.assignedto,
             i.status,
+            i.priority,
             u.firstname firstname,
             u.lastname lastname
         FROM            
-        {helpdesk_issue} i
+            {helpdesk_issue} i
         LEFT JOIN
             {user} u
         ON
@@ -49,12 +51,14 @@ $sql = '
         WHERE
             i.reportedby = u.id AND
             ' . $resolvedclause . '        
-            GROUP BY
+        GROUP BY
             i.id,
             i.summary,
             i.datereported,
             i.reportedby,
+            i.assignedto,
             i.status,
+            i.priority,
             u.firstname,
             u.lastname
     ';
@@ -67,10 +71,10 @@ $sqlcount = '
             {user} u
         WHERE
             i.reportedby = u.id AND
-            $resolvedclause
+            ' . $resolvedclause . '
     ';
 
-$numrecords = $DB -> count_records_sql($sqlcount)
+$numrecords = $DB->count_records_sql($sqlcount)
 ?>
 
     <form name="manageform" action="../view.php" method="post">
@@ -85,14 +89,13 @@ $priority = get_string('priority', 'tracker');
 $issuenumber = get_string('issuenumber', 'local_helpdesk');
 $summary = get_string('summary', 'local_helpdesk');
 $datereported = get_string('datereported', 'local_helpdesk');
-$reportedby = get_string('reported', 'local_helpdesk');
+$reportedby = get_string('reportedby', 'local_helpdesk');
 $assignedto = get_string('assignedto', 'local_helpdesk');
 $status = get_string('status', 'local_helpdesk');
-$watches = get_string('watches', 'local_helpdesk');
 $action = '';
 
 if ($resolved) {
-    $tablecolumns = array('id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'watches', 'action');
+    $tablecolumns = array('id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'action');
     $tableheaders = array(
         "<b>$issuenumber</b>",
         "<b>$summary</b>",
@@ -100,11 +103,10 @@ if ($resolved) {
         "<b>$reportedby</b>",
         "<b>$assignedto</b>",
         "<b>$status</b>",
-        "<b>$watches</b>",
         "<b>$action</b>"
     );
 } else {
-    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'watches', 'action');
+    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'reportedby', 'assignedto', 'status', 'action');
     $tableheaders = array(
         "<b>$priority</b>",
         "<b>$issuenumber</b>",
@@ -113,7 +115,6 @@ if ($resolved) {
         "<b>$reportedby</b>",
         "<b>$assignedto</b>",
         "<b>$status</b>",
-        "<b>$watches</b>",
         "<b>$action</b>"
     );
 }
@@ -139,7 +140,6 @@ $table -> set_attribute('summary', 'list_summary');
 $table -> set_attribute('datereported', 'timelabel');
 $table -> set_attribute('reportedby', 'list_reportedby');
 $table -> set_attribute('assignedto', 'list_assignedto');
-$table -> set_attribute('watches', 'list_watches');
 $table -> set_attribute('status', 'list_status');
 $table -> set_attribute('action', 'list_action');
 
@@ -162,47 +162,50 @@ $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
-        $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
+        $issuenumber = "<a href=\"view.php?
+                           view=view&amp;
+                           issueid={$issue->id}\">{$issue->id}</a>";
 
-        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
+        $summary = "<a href=\"view.php?
+                       view=view&amp;
+                       screen=viewanissue&amp;
+                       issueid={$issue->id}\">" . format_string($issue->summary) . '</a>';
 
-        $datereported = date("Y/m/d H:i, $issue->datereported");
+        $datereported = date('Y/m/d H:i', $issue->datereported);
 
-        $user = $DB -> get_record('user', array('id' => $issue -> reportedby));
+        $user = $DB->get_record('user', array('id' => $issue->reportedby));
 
         $reportedby = fullname($user);
 
         $assignedto = '';
 
-        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
+        $user = $DB->get_record('user', array('id' => $issue->assignedto));
 
-        $status_code = $STATUSCODES[$issue -> status];
+        if (has_capability('local/helpdesk:manage', $context)) {
+            $status = $FULLSTATUSKEYS[0 + $issue->status] . '<br/>' .
+                html_writer::select(
+                    $STATUSKEYS,
+                    "status{$issue->id}",
+                    0,
+                    ['' => 'choose'],
+                    ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
+                ) .
+                "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
+        }
 
-        $status = '<div class=\"status_' . $status_code . '\" style="width: 110%; height:105%; text-align: center">' . $status . '</div>';
+        $status =
+            '<div class=status_' . $STATUSCODES[$issue->status] . ' 
+                  style="width: 110%; height:105%; text-align: center">' . $status .
+            '</div>';
 
-        $hasresolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
+        $hasresolution = $issue->status === RESOLVED && !empty($issue->resolution);
 
         $solution = ($hasresolution) ?
-            "<img src=\"" . $OUTPUT -> pix_url('solution', 'helpdesk') . "\" 
+            "<img src=\"" . $OUTPUT->image_url('solution', 'helpdesk') . "\" 
                   height='15' 
-                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" 
-            />" : '';
+                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" />" : '';
 
         $actions = '';
-    }
-
-    if (has_capability('local/helpdesk:manage', $context) || has_capability('local/helpdesk:resolve', $context)) {
-        $actions =
-            "<a href=\"view.php?view=view&amp;issueid=" . $issue -> id . "&screen=editanissue\" title = \"" . get_string('update') . "\">
-                <img src=\"" . $OUTPUT -> pix_url('t/edit', 'core') . "\" alt='edit'/>
-            </a>";
-    }
-
-    if (has_capability('local/helpdesk:manage', $context)) {
-        $actions .=
-            "<a href=\"view.php?issueid={$issue->id}&what=delete\" title=\"" . get_string('delete') . "\">
-                <img src =\"" . $OUTPUT -> pix_url('t/delete', 'core') . "\" alt='delete'/>
-            </a>";
     }
 }
 
