@@ -25,6 +25,7 @@ $string['datereported'] = 'Дата назначения';
 $string['priority'] = 'Приоритет';
 $string['issuenumber'] = 'Заявка';
 $string['unassigned'] = 'Неназначенная';
+$string['notickets'] = 'Нет заявок';
 
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
