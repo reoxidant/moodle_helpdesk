@@ -10,7 +10,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once($CFG -> libdir . '/tablelib.php');
+global $CFG, $DB, $USER;
+
+require_once($CFG->libdir . '/tablelib.php');
 
 $limit = 20;
 $page = optional_param('page', 1, PARAM_INT);
@@ -81,7 +83,7 @@ $status = get_string('status', 'local_helpdesk');
 $action = '';
 
 if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
-    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'assignedto', 'status', 'watches', 'action');
+    $tablecolumns = array('priority', 'id', 'summary', 'datereported', 'assignedto', 'status', 'action');
     $tableheaders = array(
         "<b>$priority</b>",
         '',
@@ -92,7 +94,7 @@ if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
         "<b>$action</b>"
     );
 } else {
-    $tablecolumns = array('id', 'summary', 'datereported', 'assignedto', 'status', 'watches', 'action');
+    $tablecolumns = array('id', 'summary', 'datereported', 'assignedto', 'status', 'action');
     $tableheaders = array(
         '',
         "<b>$summary</b>",
@@ -175,9 +177,9 @@ if (!empty($issues)) {
         $hasresolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
         $solution = ($hasresolution) ?
-            "<img src=\""
-            . $OUTPUT -> pix_url('solution', 'helpdesk') .
-            "\" height='15' alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" />" : '';
+            "<img src=\"" . $OUTPUT->image_url('solution', 'helpdesk') . "\" 
+                  height='15' 
+                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" />" : '';
 
         $actions = '';
 
