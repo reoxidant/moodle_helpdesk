@@ -26,6 +26,10 @@ $string['priority'] = 'Приоритет';
 $string['issuenumber'] = 'Заявка';
 $string['unassigned'] = 'Неназначенная';
 $string['notickets'] = 'Нет заявок';
+$string['hassolution'] = 'Решение опублиновано для этой заявки';
+$string['noissuesreported'] = 'Тут нет заявок';
+$string['noissuesresolved'] = 'Нет решенных заявок';
+$string['reportedby'] = 'Опубликовано';
 
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
