@@ -12,7 +12,10 @@ if (!defined('MOODLE_INTERNAL')) {
 
 global $CFG, $DB;
 
-require_once($CFG -> libdir . '/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
+
+$FULLSTATUSKEYS = helpdesk_get_status_keys();
+$STATUSKEYS = helpdesk_get_status_keys();
 
 $limit = 20;
 $page = optional_param('page', 1, PARAM_INT);
@@ -49,7 +52,7 @@ $sql = '
         ON
             i.reportedby = u.id
         WHERE
-            i.reportedby = u.id AND
+            i.reportedby = u.id
             ' . $resolvedclause . '        
         GROUP BY
             i.id,
@@ -70,7 +73,7 @@ $sqlcount = '
             {helpdesk_issue} i,
             {user} u
         WHERE
-            i.reportedby = u.id AND
+            i.reportedby = u.id
             ' . $resolvedclause . '
     ';
 
@@ -85,7 +88,7 @@ $numrecords = $DB->count_records_sql($sqlcount)
 
 //Define table object.
 
-$priority = get_string('priority', 'tracker');
+$priority = get_string('priority', 'local_helpdesk');
 $issuenumber = get_string('issuenumber', 'local_helpdesk');
 $summary = get_string('summary', 'local_helpdesk');
 $datereported = get_string('datereported', 'local_helpdesk');
@@ -198,16 +201,55 @@ if (!empty($issues)) {
                   style="width: 110%; height:105%; text-align: center">' . $status .
             '</div>';
 
-        $hasresolution = $issue->status === RESOLVED && !empty($issue->resolution);
+        $hassolution = $issue->status === RESOLVED && !empty($issue->resolution);
 
-        $solution = ($hasresolution) ?
+        $solution = ($hassolution) ?
             "<img src=\"" . $OUTPUT->image_url('solution', 'helpdesk') . "\" 
                   height='15' 
-                  alt=\"" . get_string('hasresolution', 'local_helpdesk') . "\" />" : '';
+                  alt=\"" . get_string('hassolution', 'local_helpdesk') . "\" />" : '';
 
         $actions = '';
+
+        if (
+            has_capability('local/helpdesk:manage', $context) ||
+            has_capability('local/helpdesk:resolve', $context)
+        ) {
+            $actions =
+                "<a href=\"view.php?view=view&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
+                    <img src =\"" . $OUTPUT->image_url('t/edit', 'core') . "\" alt='edit' />
+                </a>";
+        }
+
+        if (has_capability('local/helpdesk:manage', $context)) {
+            $actions .=
+                "<a href=\"view.php?issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
+                    <img src =\"" . $OUTPUT->image_url('t/delete', 'core') . "\" alt='delete' />
+                </a>";
+        }
+        if ($resolved) {
+            $dataset = [$issuenumber, $summary . '' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
+        } else {
+            $dataset = [$maxpriority - $issue->priority + 1, $issuenumber, $summary . ' ' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
+        }
+        $table->add_data($dataset);
+    }
+    $table->finish_html();
+    echo '<br/>';
+
+    echo '<div style="text-align: center;">';
+    echo '<p><input type="submit" name="go_btn" value="' . get_string('savechanges') . '" /> </p>';
+    echo '</div>';
+
+} else {
+    if (!$resolved) {
+        echo '<br/>';
+        echo '<br/>';
+        echo $OUTPUT->notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
+    } else {
+        echo '<br/>';
+        echo '<br/>';
+        echo $OUTPUT->notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
     }
 }
-
 
 echo ' </form > ';
