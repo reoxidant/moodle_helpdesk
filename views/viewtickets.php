@@ -12,7 +12,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 global $CFG, $DB;
 
-require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG -> libdir . '/tablelib.php');
 
 $FULLSTATUSKEYS = helpdesk_get_status_keys();
 $STATUSKEYS = helpdesk_get_status_keys();
@@ -77,10 +77,10 @@ $sqlcount = '
             ' . $resolvedclause . '
     ';
 
-$numrecords = $DB->count_records_sql($sqlcount)
+$numrecords = $DB -> count_records_sql($sqlcount)
 ?>
 
-    <form name="manageform" action="../view.php" method="post">
+    <form name="manageform" action="../helpdesk/view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
         <input type="hidden" name="view" value="view"/>
         <input type="hidden" name="screen" value="browse"/>
@@ -172,21 +172,21 @@ if (!empty($issues)) {
         $summary = "<a href=\"view.php?
                        view=view&amp;
                        screen=viewanissue&amp;
-                       issueid={$issue->id}\">" . format_string($issue->summary) . '</a>';
+                       issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
-        $datereported = date('Y/m/d H:i', $issue->datereported);
+        $datereported = date('Y/m/d H:i', $issue -> datereported);
 
-        $user = $DB->get_record('user', array('id' => $issue->reportedby));
+        $user = $DB -> get_record('user', array('id' => $issue -> reportedby));
 
         $reportedby = fullname($user);
 
         $assignedto = '';
 
-        $user = $DB->get_record('user', array('id' => $issue->assignedto));
+        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
         if (has_capability('local/helpdesk:manage', $context)) {
-            $status = $FULLSTATUSKEYS[0 + $issue->status] . '<br/>' .
-                html_writer::select(
+            $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
+                html_writer ::select(
                     $STATUSKEYS,
                     "status{$issue->id}",
                     0,
@@ -197,14 +197,14 @@ if (!empty($issues)) {
         }
 
         $status =
-            '<div class=status_' . $STATUSCODES[$issue->status] . ' 
+            '<div class=status_' . $STATUSCODES[$issue -> status] . ' 
                   style="width: 110%; height:105%; text-align: center">' . $status .
             '</div>';
 
-        $hassolution = $issue->status === RESOLVED && !empty($issue->resolution);
+        $hassolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
         $solution = ($hassolution) ?
-            "<img src=\"" . $OUTPUT->image_url('solution', 'helpdesk') . "\" 
+            "<img src=\"" . $OUTPUT -> image_url('solution', 'helpdesk') . "\" 
                   height='15' 
                   alt=\"" . get_string('hassolution', 'local_helpdesk') . "\" />" : '';
 
@@ -216,24 +216,24 @@ if (!empty($issues)) {
         ) {
             $actions =
                 "<a href=\"view.php?view=view&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
-                    <img src =\"" . $OUTPUT->image_url('t/edit', 'core') . "\" alt='edit' />
+                    <img src =\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' />
                 </a>";
         }
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $actions .=
                 "<a href=\"view.php?issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
-                    <img src =\"" . $OUTPUT->image_url('t/delete', 'core') . "\" alt='delete' />
+                    <img src =\"" . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' />
                 </a>";
         }
         if ($resolved) {
             $dataset = [$issuenumber, $summary . '' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
         } else {
-            $dataset = [$maxpriority - $issue->priority + 1, $issuenumber, $summary . ' ' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
+            $dataset = [$maxpriority - $issue -> priority + 1, $issuenumber, $summary . ' ' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
         }
-        $table->add_data($dataset);
+        $table -> add_data($dataset);
     }
-    $table->finish_html();
+    $table -> finish_html();
     echo '<br/>';
 
     echo '<div style="text-align: center;">';
@@ -244,11 +244,11 @@ if (!empty($issues)) {
     if (!$resolved) {
         echo '<br/>';
         echo '<br/>';
-        echo $OUTPUT->notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
+        echo $OUTPUT -> notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
     } else {
         echo '<br/>';
         echo '<br/>';
-        echo $OUTPUT->notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
+        echo $OUTPUT -> notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
     }
 }
 
