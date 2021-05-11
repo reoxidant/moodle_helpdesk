@@ -24,9 +24,13 @@ if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen 
     redirect(new moodle_url('/local/helpdesk/view.php'), ['view' => 'view', 'screen' => 'browse']);
 }
 
-if($issueid){
+if ($view === 'reportanissue') {
+    redirect(new moodle_url('/local/helpdesk/view.php'));
+}
+
+if ($issueid) {
     $view = 'view';
-    if(empty($screen)) {
+    if (empty($screen)) {
         $screen = 'viewanissue';
     }
 }
@@ -36,15 +40,16 @@ if (!isloggedin() or isguestuser()) {
     die;
 }
 
+$context = context_system ::instance();
+
 $pluginname = get_string('pluginname', 'local_helpdesk');
 
-$context = context_system ::instance();
 $PAGE -> set_context($context);
-$PAGE -> set_pagelayout('standard');
-$PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 $PAGE -> set_url($url);
+$PAGE -> set_pagelayout('standard');
+$PAGE -> navbar -> add($pluginname);
 
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
@@ -56,6 +61,8 @@ echo $OUTPUT -> header();
 
 echo $OUTPUT -> box_start('', 'helpdesk-view');
 echo $renderer -> tabs($view, $screen);
+
+// MARK: Tickets screen views
 
 if ($view === 'view') {
     switch ($screen) {
