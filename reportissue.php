@@ -24,12 +24,12 @@ $pluginname = get_string('pluginname', 'local_helpdesk');
 $url = new moodle_url('/local/helpdesk/reportissue.php');
 
 $context = context_system ::instance();
+$PAGE -> set_url($url);
 $PAGE -> set_context($context);
 $PAGE -> set_pagelayout('standard');
 $PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
-$PAGE -> set_url($url);
 
 $form = new HelpDeskIssueForm($url);
 
