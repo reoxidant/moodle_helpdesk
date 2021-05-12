@@ -53,8 +53,12 @@ $PAGE -> navbar -> add($pluginname);
 
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
-if (($view === 'view') && $action !== '') {
-    $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
+if($action !== ''){
+    if (($view === 'view')) {
+        $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
+    } elseif ($view === 'resolved') {
+        $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
+    }
 }
 
 echo $OUTPUT -> header();
