@@ -69,8 +69,6 @@ function helpdesk_resolve_view()
 
 function helpdesk_has_assigned_issues($resolved = false): int
 {
-    global $DB, $USER;
-
     $select = '
         issueid = ? AND
         assignedto = ?
@@ -94,7 +92,7 @@ function helpdesk_has_assigned_issues($resolved = false): int
 //    return $DB->count_records_select('tracker_issue', $select, $search);
 }
 
-function helpdesk_submit_issue_form(&$data): StdClass
+function helpdesk_submit_issue_form(&$data): ?StdClass
 {
     global $DB, $USER;
 
@@ -117,6 +115,7 @@ function helpdesk_submit_issue_form(&$data): StdClass
     }
 
     print_error('errorrecordissue', 'local_helpdesk');
+    return null;
 }
 
 function helpdesk_get_status_keys()
@@ -132,4 +131,30 @@ function helpdesk_get_status_keys()
     }
 
     return $FULLSTATUSKEYS;
+}
+
+function helpdesk_update_priority_stack()
+{
+    global $DB;
+
+    $sql = '
+        UPDATE
+            {helpdesk_issue}
+        SET
+            priority = 0
+        WHERE
+            status IN (' . RESOLVED . ')
+    ';
+    $DB -> execute($sql);
+
+    // fetch prioritarized by order
+    $issues = $DB -> get_records_select('helpdesk_issue', 'priority != 0', null, 'priority', 'id, priority');
+    $i = 1;
+    if (!empty($issues)) {
+        foreach ($issues as $issue) {
+            $issue -> priority = $i;
+            $DB -> update_record('helpdesk_issue', $issue);
+            $i++;
+        }
+    }
 }

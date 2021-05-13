@@ -80,7 +80,7 @@ $sqlcount = '
 $numrecords = $DB -> count_records_sql($sqlcount)
 ?>
 
-    <form name="manageform" action="../helpdesk/view.php" method="post">
+    <form name="manageform" action="/local/helpdesk/view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
         <input type="hidden" name="view" value="view"/>
         <input type="hidden" name="screen" value="browse"/>
@@ -159,7 +159,6 @@ if ($sort !== null) {
 }
 
 $issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
-
 $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
 if (!empty($issues)) {
@@ -186,11 +185,8 @@ if (!empty($issues)) {
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
-                html_writer ::select(
-                    $STATUSKEYS,
-                    "status{$issue->id}",
-                    0,
-                    ['' => 'choose'],
+                html_writer ::select($STATUSKEYS,
+                    "status{$issue->id}", 0, ['' => 'choose'],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
                 ) .
                 "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
@@ -204,18 +200,16 @@ if (!empty($issues)) {
         $hassolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
         $solution = ($hassolution) ?
-            "<img src=\"" . $OUTPUT -> image_url('solution', 'helpdesk') . "\" 
-                  height='15' 
-                  alt=\"" . get_string('hassolution', 'local_helpdesk') . "\" />" : '';
+            '<img src="' . $OUTPUT -> image_url('solution', 'helpdesk') . '" height="15" 
+                  alt="' . get_string('hassolution', 'local_helpdesk') . '" />' : '';
 
         $actions = '';
 
-        if (
-            has_capability('local/helpdesk:manage', $context) ||
-            has_capability('local/helpdesk:resolve', $context)
-        ) {
+        if (has_capability('local/helpdesk:manage', $context) ||
+            has_capability('local/helpdesk:resolve', $context)) {
             $actions =
-                "<a href=\"view.php?view=view&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
+                "<a href=\"view.php?view=view&amp;issueid={$issue->id}&screen=editanissue\" 
+                    title=\"" . get_string('update') . "\" >
                     <img src =\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' />
                 </a>";
         }

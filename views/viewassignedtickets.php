@@ -14,6 +14,9 @@ global $CFG, $DB, $USER;
 
 require_once($CFG -> libdir . '/tablelib.php');
 
+$FULLSTATUSKEYS = helpdesk_get_status_keys();
+$STATUSKEYS = helpdesk_get_status_keys();
+
 $limit = 20;
 $page = optional_param('page', 1, PARAM_INT);
 
@@ -140,9 +143,6 @@ if ($sort !== null) {
 $issues = $DB -> get_records_sql($sql, null, $table -> get_page_start(), $table -> get_page_size());
 $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
-$FULLSTATUSKEYS = helpdesk_get_status_keys();
-$STATUSKEYS = helpdesk_get_status_keys();
-
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
@@ -157,15 +157,24 @@ if (!empty($issues)) {
         $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
         if (has_capability('local/helpdesk:manage', $context)) {
-            $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' . html_writer ::select($STATUSKEYS,
-                    "status{$issue->id}", 0, [], ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
-                );
-            $assignedto = html_writer ::select([],
-                "assignedto{$issue->id}", $issue -> assignedto, ['' => get_string('unassigned', 'local_helpdesk')],
-                ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
-            );
+            $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
+                html_writer ::select($STATUSKEYS,
+                    "status{$issue->id}", 0, ['' => 'choose'],
+                    ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
+                ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
+
+            $assignedto =
+                html_writer ::select([],
+                    "assignedto{$issue->id}", $issue -> assignedto,
+                    ['' => get_string('unassigned', 'local_helpdesk')],
+                    ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
+                ) . "<input type=\"hidden\" name=\"changed{$issue->id}\" value=\"0\" />";
         }
-        $status = '<div class="status_' . $STATUSCODES[$issue -> status] . '" style="width: 110%; height: 105%; text-align:center">' . $status . '</div>';
+        $status =
+            '<div class="status_' . $STATUSCODES[$issue -> status] . '" 
+                  style="width: 110%; height: 105%; text-align:center">'
+            . $status .
+            '</div>';
 
         $hassolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
@@ -175,9 +184,13 @@ if (!empty($issues)) {
 
         $actions = '';
 
-        if (has_capability('local/helpdesk:manage', $context) || has_capability('local/helpdesk:resolve', $context)) {
-            $actions = "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" title=\"" . get_string('update') . "\" >
-                           <img src=\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt=''/></a>";
+        if (has_capability('local/helpdesk:manage', $context) ||
+            has_capability('local/helpdesk:resolve', $context)) {
+            $actions =
+                "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" 
+                    title=\"" . get_string('update') . "\" >
+                           <img src=\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt=''/>
+                </a>";
         }
 
         if (has_capability('local/helpdesk:manage', $context)) {
@@ -189,7 +202,7 @@ if (!empty($issues)) {
 
         if (!$resolved && has_capability('local/helpdesk:viewpriority', $context)) {
             $ticketpriority = ($issue -> status < RESOLVED) ? $maxpriority - $issue -> priority + 1 : '';
-            $dataset = [$priority, $issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions];
+            $dataset = [$ticketpriority, $issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions];
         } else {
             $dataset = [$issuenumber, $summary . ' ' . $solution, $datereported, $assignedto, $status, $actions];
         }
