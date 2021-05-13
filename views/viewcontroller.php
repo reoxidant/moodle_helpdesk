@@ -6,25 +6,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 if ($action === 'updatelist') {
     $keys = array_keys($_POST);
-
-// 0 = "action"
-// 1 = "view"
-// 2 = "assignedto2"
-// 3 = "status2"
-// 4 = "assignedto1"
-// 5 = "status1"
-// 6 = "go_btn"
-
-// 0 = "id"
-// 1 = "what"
-// 2 = "view"
-// 3 = "screen"
-// 4 = "status22"
-// 5 = "schanged22"
-// 6 = "go_btn"
-
-    $statuskeys = preg_grep('/status./' , $keys);              // filter out only the status
-    $assignedtokeys = preg_grep('/assignedto./' , $keys);
+    $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
+    $assignedtokeys = preg_grep('/assignedto./', $keys);
     $newassignedtokeys = preg_grep('/assignedtoi./', $keys);
     foreach ($statuskeys as $akey) {
         $issueid = str_replace('status', '', $akey);
@@ -48,15 +31,5 @@ if ($action === 'updatelist') {
         }
     }
 
-    //always add a record for history
-
-    foreach($assignedtokeys as $akey) {
-        $issueid = str_replace('assignedto', '', $akey);
-        // new ownership is triggered only when a change occured
-        $haschanged = optional_param('changed'.$issueid, 0, PARAM_INT);
-        if ($haschanged) {
-            // save old assignement in history
-            console_log($haschanged);
-        }
-    }
+    helpdesk_update_priority_stack();
 }
