@@ -8,39 +8,56 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$totalissues = 0;
-$totalresolvedissue = 0;
+global $OUTPUT, $DB, $USER;
 
-/* if ($screen === 'tickets') {
-    //$totalissues = define in $DB->count_records_select
+$str = '';
+$context = context_system ::instance();
+
+
+if ($screen === 'tickets') {
+    $select = 'status <> ' . RESOLVED . ' AND reportedby = ? ';
+    $totalissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
+
+    $select = 'status = ' . RESOLVED . ' AND reportedby = ? ';
+    $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
 } elseif ($screen === 'work') {
-    //$totalissues = define in $DB->count_records_select
+    $select = 'status <> ' . RESOLVED . ' AND assignedto = ? ';
+    $totalissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
+
+    $select = 'status = ' . RESOLVED . ' AND assignedto = ? ';
+    $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
 } else {
-    $totalissues = 0;
-    $totalresolvedissue = 0;
-}*/
+    $select = 'status <> ' . RESOLVED;
+    $totalissues = $DB -> count_records_select('helpdesk_issue', $select);
+
+    $select = 'status = ' . RESOLVED;
+    $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select);
+}
 
 // Render Tabs with options for user.
 
+if ($context === null) {
+    die('context is null');
+}
+
 if (has_capability('local/helpdesk:report', $context)) {
-    $rows[0][] = new tabobject('reportanissue', 'reportissue.php',
-        get_string('newissue', 'local_helpdesk'));
+    $rows[0][] = new tabobject('reportanissue', 'reportissue.php', get_string('newissue', 'local_helpdesk'));
 }
 
 $rows[0][] = new tabobject('view', 'view.php?view=view',
     get_string('view', 'local_helpdesk') . ' (' . $totalissues . ' ' .
-    get_string('issues', 'local_helpdesk') . ')');
+    get_string('issues', 'local_helpdesk') . ')'
+);
 
 $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
     get_string('resolvedplural', 'local_helpdesk') . ' (' . $totalresolvedissue . ' ' .
-    get_string('issues', 'local_helpdesk') . ')');
+    get_string('issues', 'local_helpdesk') . ')'
+);
 
-$rows[0][] = new tabobject('profile', 'view.php?view=profile',
-    get_string('profile', 'local_helpdesk'));
+$rows[0][] = new tabobject('profile', 'view.php?view=profile', get_string('profile', 'local_helpdesk'));
 
 if (has_capability('local/helpdesk:configure', $context)) {
-    $rows[0][] = new tabobject('admin', 'view.php?view=admin',
-        get_string('administration', 'local_helpdesk'));
+    $rows[0][] = new tabobject('admin', 'view.php?view=admin', get_string('administration', 'local_helpdesk'));
 }
 
 // Render Subtabs
@@ -77,7 +94,9 @@ switch ($view) {
 if (!empty($screen)) {
     $selected = $screen;
     $activated = [$view];
-} else $selected = $view;
+} else {
+    $selected = $view;
+}
 
 echo $OUTPUT -> container_start('local-header helpdesk-tabs');
 print_tabs($rows, $selected, '', $activated);

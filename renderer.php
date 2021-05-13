@@ -21,22 +21,30 @@ class local_helpdesk_renderer extends plugin_renderer_base
      */
     public function tabs($view, $screen): string
     {
-        global $OUTPUT;
+        global $OUTPUT, $DB, $USER;
 
         $str = '';
         $context = context_system ::instance();
 
-        $totalissues = 0;
-        $totalresolvedissue = 0;
+        if ($screen === 'tickets') {
+            $select = 'status <> ' . RESOLVED . ' AND reportedby = ? ';
+            $totalissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
 
-        /*      if ($screen === 'tickets') {
-                    //$totalissues = define in $DB->count_records_select
-                } elseif ($screen === 'work') {
-                    //$totalissues = define in $DB->count_records_select
-                } else {
-                    $totalissues = 0;
-                    $totalresolved_issue = 0;
-                }*/
+            $select = 'status = ' . RESOLVED . ' AND reportedby = ? ';
+            $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
+        } elseif ($screen === 'work') {
+            $select = 'status <> ' . RESOLVED . ' AND assignedto = ? ';
+            $totalissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
+
+            $select = 'status = ' . RESOLVED . ' AND assignedto = ? ';
+            $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
+        } else {
+            $select = 'status <> ' . RESOLVED;
+            $totalissues = $DB -> count_records_select('helpdesk_issue', $select);
+
+            $select = 'status = ' . RESOLVED;
+            $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select);
+        }
 
         // Render Tabs with options for user.
 
@@ -49,11 +57,12 @@ class local_helpdesk_renderer extends plugin_renderer_base
         }
 
         $rows[0][] = new tabobject('view', 'view.php?view=view', get_string('view', 'local_helpdesk') .
-            ' (' . $totalissues . ' ' . get_string('issues', 'local_helpdesk') . ')');
+            ' (' . $totalissues . ' ' . get_string('issues', 'local_helpdesk') . ')'
+        );
 
-        $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
-            get_string('resolvedplural', 'local_helpdesk') .
-            ' (' . $totalresolvedissue . ' ' . get_string('issues', 'local_helpdesk') . ')');
+        $rows[0][] = new tabobject('resolved', 'view.php?view=resolved', get_string('resolvedplural', 'local_helpdesk') .
+            ' (' . $totalresolvedissues . ' ' . get_string('issues', 'local_helpdesk') . ')'
+        );
 
         $rows[0][] = new tabobject('profile', 'view.php?view=profile', get_string('profile', 'local_helpdesk'));
 
@@ -61,9 +70,8 @@ class local_helpdesk_renderer extends plugin_renderer_base
             $rows[0][] = new tabobject('admin', 'view.php?view=admin', get_string('administration', 'local_helpdesk'));
         }
 
-        // Render Subtabs
+        // Render Subtabs menu
 
-//        $selected = null;
         $activated = null;
         switch ($view) {
             case 'view' :
@@ -95,7 +103,9 @@ class local_helpdesk_renderer extends plugin_renderer_base
         if (!empty($screen)) {
             $selected = $screen;
             $activated = [$view];
-        } else $selected = $view;
+        } else {
+            $selected = $view;
+        }
         $str .= $OUTPUT -> container_start('local-header helpdesk-tabs');
         $str .= print_tabs($rows, $selected, '', $activated, true);
         $str .= $OUTPUT -> container_end();
