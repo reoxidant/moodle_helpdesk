@@ -37,3 +37,5 @@ $string['resolved'] = 'Закрыта';
 
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
 $string['errorrecordissue'] = 'Не удалось создать новую заявку';
+$string['errornoaccessallissues'] = 'У вас нет доступа для просмотра всех заявок.';
+$string['errorfindingaction'] = 'Ошибка: Не могу выполнить действие: {$a}';
