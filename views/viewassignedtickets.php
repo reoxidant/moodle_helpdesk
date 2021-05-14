@@ -71,6 +71,7 @@ $numrecords = $DB -> count_records_sql($sqlcount);
 
     <form name="manageform" action="/local/helpdesk/view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
+
         <input type="hidden" name="view" value="resolved"/>
 <?php
 
@@ -153,8 +154,6 @@ if (!empty($issues)) {
             '</a>';
 
         $datereported = date('Y/m/d H:i', $issue -> datereported);
-
-        $user = $DB -> get_record('user', array('id' => $issue -> assignedto));
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .

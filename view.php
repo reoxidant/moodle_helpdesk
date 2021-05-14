@@ -53,7 +53,7 @@ $PAGE -> navbar -> add($pluginname);
 
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
-if($action !== ''){
+if ($action !== '') {
     if (($view === 'view')) {
         $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
     } elseif ($view === 'resolved') {
@@ -69,19 +69,43 @@ echo $renderer -> tabs($view, $screen);
 // MARK: Tickets screen views
 
 if ($view === 'view') {
-    switch ($screen) {
-        case 'tickets':
-            $resolved = 0;
-            include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
-            break;
-        case 'browse':
-            $resolved = 0;
-            include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
-            break;
+    if ($result !== -1) {
+        switch ($screen) {
+            case 'tickets':
+                $resolved = 0;
+                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                break;
+            case 'browse':
+                $resolved = 0;
+                include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                break;
+        }
+    }
+} elseif ($view === 'resolved') {
+    if ($result !== -1) {
+        switch ($screen) {
+            case 'tickets':
+                $resolved = 1;
+                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                break;
+            case 'browse':
+                if (!has_capability('local/helpdesk:viewallissues', $context)) {
+                    print_error('errornoaccessallissues', 'local_helpdesk');
+                } else {
+                    $resolved = 1;
+                    include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                }
+                break;
+        }
     }
 } else {
-    $resolved = 0;
-    include($CFG -> diroot . '/local/helpdesk/views/viewassignedtickets.php');
+    try {
+        //default view
+        $resolved = 0;
+        include($CFG -> diroot . '/local/helpdesk/views/viewassignedtickets.php');
+    } catch (Throwable $e) {
+        print_error('errorfindingaction', 'tracker', $action);
+    }
 }
 
 echo $OUTPUT -> box_end();

@@ -12,10 +12,15 @@ if ($action === 'updatelist') {
     foreach ($statuskeys as $akey) {
         $issueid = str_replace('status', '', $akey);
         $haschanged = optional_param('schanged' . $issueid, 0, PARAM_INT);
+        $status = required_param($akey, PARAM_INT);
+
+        //Direct on new tab only resolve tickets
+        if ($status !== 3) {$view = 'view';}
+
         if ($haschanged) {
             $issue = new StdClass;
             $issue -> id = $issueid;
-            $issue -> status = required_param($akey, PARAM_INT);
+            $issue -> status = $status;
             $oldstatus = $DB -> get_field('helpdesk_issue', 'status', ['id' => $issue -> id]);
             $DB -> update_record('helpdesk_issue', $issue);
             // MARK: check status changing and send notifications
