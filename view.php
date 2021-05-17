@@ -79,6 +79,12 @@ if ($view === 'view') {
                 $resolved = 0;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 break;
+            case 'viewanissue':
+                if (!has_any_capability(['local/helpdesk:seeissues','local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
+                    print_error('errornoaccessissue', 'local_helpdesk');
+                } else {
+                    include($CFG -> dirroot . '/local/helpdesk/views/viewanissue.php');
+                }
         }
     }
 } elseif ($view === 'resolved') {
