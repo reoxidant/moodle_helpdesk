@@ -112,4 +112,58 @@ class local_helpdesk_renderer extends plugin_renderer_base
 
         return $str;
     }
+
+    /**
+     * @throws moodle_exception
+     * @throws coding_exception
+     */
+    public function edit_link($issue): string
+    {
+        $params = ['view' => 'view', 'screen' => 'editanissue', 'issueid' => $issue -> id];
+
+        $issueurl = new moodle_url('/local/helpdesk/view.php', $params);
+
+        $str = '<tr>';
+        $str .= '<td colspan="4" align="right">';
+        $str .= '<form method="post" action="' . $issueurl . '">';
+        $str .= '<input type="submit" name="go_btn" value="' . get_string('turneditingon', 'local_helpdesk') . '">';
+        $str .= '</form>';
+        $str .= '</td>';
+        $str .= '</tr>';
+
+        return $str;
+    }
+
+    /**
+     * @throws coding_exception
+     */
+    public function core_issue($issue)
+    {
+        $str = '<tr valign="top">';
+        $str .= '<td colspan="4" align="left" class="helpdesk-issue-summary">';
+        $str .= format_string($issue -> summary);
+        $str .= '</td>';
+        $str .= '</tr>';
+
+        $link = '';
+
+        if ($issue -> downlink) {
+            $access = true;
+            list($hostid, $instanceid, $issueid) = explode(':', $issue -> downlink);
+            if (!$hostid || $hostid === $CFG -> mnet_localhost_id) {
+                if ($DB -> record_exists('helpdesk_issue', ['id' => $issueid])) {
+                    $params = ['view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid];
+                    if (has_capability('local/helpdesk:seeissues', $context)) {
+                        $link = html_writer ::link($url, get_string('gotooriginal', 'local_helpdesk'));
+                    } else {
+                        $link = get_string('originalticketnoaccess', 'local_helpdesk');
+                    }
+                } else {
+                    $DB -> set_field('helpdesk_issue', 'downlink', '', ['id' => $issue -> id]);
+                }
+            } else {
+                $host = $DB -> get_record('mnet_host', ['id' => $hostid]);
+            }
+        }
+    }
 }
