@@ -8,8 +8,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ *
+ */
 const OPEN = 1;
+/**
+ *
+ */
 const RESOLVING = 2;
+/**
+ *
+ */
 const RESOLVED = 3;
 
 global $STATUSCODES;
@@ -67,6 +76,10 @@ function helpdesk_resolve_view()
     return $view;
 }
 
+/**
+ * @param false $resolved
+ * @return int
+ */
 function helpdesk_has_assigned_issues($resolved = false): int
 {
     $select = '
@@ -92,6 +105,12 @@ function helpdesk_has_assigned_issues($resolved = false): int
 //    return $DB->count_records_select('tracker_issue', $select, $search);
 }
 
+/**
+ * @param $data
+ * @return StdClass|null
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
 function helpdesk_submit_issue_form(&$data): ?StdClass
 {
     global $DB, $USER;
@@ -118,6 +137,10 @@ function helpdesk_submit_issue_form(&$data): ?StdClass
     return null;
 }
 
+/**
+ * @return array|mixed
+ * @throws coding_exception
+ */
 function helpdesk_get_status_keys()
 {
     static $FULLSTATUSKEYS;
@@ -133,6 +156,9 @@ function helpdesk_get_status_keys()
     return $FULLSTATUSKEYS;
 }
 
+/**
+ * @throws dml_exception
+ */
 function helpdesk_update_priority_stack()
 {
     global $DB;
@@ -147,7 +173,7 @@ function helpdesk_update_priority_stack()
     ';
     $DB -> execute($sql);
 
-    // fetch prioritarized by order
+    // fetch prioritized by order
     $issues = $DB -> get_records_select('helpdesk_issue', 'priority != 0', null, 'priority', 'id, priority');
     $i = 1;
     if (!empty($issues)) {
@@ -157,4 +183,45 @@ function helpdesk_update_priority_stack()
             $i++;
         }
     }
+}
+
+/**
+ * @throws coding_exception
+ */
+function helpdesk_can_workon(&$context, $issue = null): bool
+{
+    global $USER;
+
+    if ($issue) {
+        if ($issue -> assignedto === $USER -> id && has_capability('local/helpdesk:resolve', $context)) {
+            return true;
+        }
+    } else if (has_capability('local/helpdesk:resolve', $context)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @param $context
+ * @param $issue
+ * @return bool
+ * @throws coding_exception
+ */
+function helpdesk_can_edit(&$context, &$issue): bool
+{
+    if (has_capability('local/helpdesk:manage', $context)) {
+        return true;
+    }
+
+    if ($issue -> repotedby === $USER -> id) {
+        return true;
+    }
+
+    if ($issue -> assgnedto === $USER -> id && has_capability('local/helpdesk:resolve', $context)) {
+        return true;
+    }
+
+    return false;
 }
