@@ -14,12 +14,13 @@ defined('MOODLE_INTERNAL') || die();
 class local_helpdesk_renderer extends plugin_renderer_base
 {
     /**
-     * @param $view
-     * @param $screen
+     * @param String $view
+     * @param String $screen
      * @return string
      * @throws coding_exception
+     * @throws dml_exception
      */
-    public function tabs($view, $screen): string
+    final public function tabs(string $view, string $screen): string
     {
         global $OUTPUT, $DB, $USER;
 
@@ -87,16 +88,24 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 }
                 break;
             case 'resolved' :
-                if (!preg_match('/tickets|browse|work/', $screen)) $screen = 'tickets';
+                if (!preg_match('/tickets|browse|work/', $screen)) {
+                    $screen = 'tickets';
+                }
                 break;
             case 'profile':
-                if (!preg_match('/profile|preferences|watches|queries/', $screen)) $screen = 'profile';
+                if (!preg_match('/profile|preferences|watches|queries/', $screen)) {
+                    $screen = 'profile';
+                }
                 break;
             case 'reports':
-                if (!preg_match('/status|evolution|print/', $screen)) $screen = 'status';
+                if (!preg_match('/status|evolution|print/', $screen)) {
+                    $screen = 'status';
+                }
                 break;
             case 'admin':
-                if (!preg_match('/summary|manageelements|managenetwork/', $screen)) $screen = 'summary';
+                if (!preg_match('/summary|manageelements|managenetwork/', $screen)) {
+                    $screen = 'summary';
+                }
                 break;
             default:
         }
@@ -114,18 +123,20 @@ class local_helpdesk_renderer extends plugin_renderer_base
     }
 
     /**
-     * @throws moodle_exception
+     * @param stdClass $issue
+     * @return string
      * @throws coding_exception
+     * @throws moodle_exception
      */
-    public function edit_link($issue): string
+    final public function edit_link(stdClass $issue): string
     {
         $params = ['view' => 'view', 'screen' => 'editanissue', 'issueid' => $issue -> id];
 
         $issueurl = new moodle_url('/local/helpdesk/view.php', $params);
 
         $str = '<tr>';
-        $str .= '<td colspan="4" align="right">';
-        $str .= '<form method="post" action="' . $issueurl . '">';
+        $str .= '<td colspan="4"  style="text-align: right">';
+        $str .= '<form method="post" action="' . $issueurl -> __toString() . '">';
         $str .= '<input type="submit" name="go_btn" value="' . get_string('turneditingon', 'local_helpdesk') . '">';
         $str .= '</form>';
         $str .= '</td>';
@@ -135,35 +146,29 @@ class local_helpdesk_renderer extends plugin_renderer_base
     }
 
     /**
+     * @param stdClass $issue
+     * @return string
      * @throws coding_exception
      */
-    public function core_issue($issue)
+    final public function core_issue(stdClass $issue): string
     {
-        $str = '<tr valign="top">';
-        $str .= '<td colspan="4" align="left" class="helpdesk-issue-summary">';
-        $str .= format_string($issue -> summary);
-        $str .= '</td>';
-        $str .= '</tr>';
+        $str = '<tr style="vertical-align:top">
+                    <td colspan="4" style="text-align:left" class="helpdesk-issue-summary">' . format_string($issue -> summary) . '</td>
+                </tr>';
 
-        $link = '';
+        $str .= '<tr style="vertical-align:top">
+                    <td style="text-align:right; width=25%" class="helpdesk-issue-param">
+                        <b>' . get_string('issuenumber', 'local_helpdesk') . ':</b><br/>
+                    </td>
+                    <td style="text-align:right; width=25%" class="helpdesk-issue-param">
+                       <b>' . get_string('status', 'local_helpdesk') . ':</b>
+                    </td>
+                    <td style="width: 25%" class="status_' . $STATUSKEYS[$issue -> status] . '">
+                       <b>' . $STATUSKEYS[$issue -> status] . '</b>
+                    </td>
+                 </tr>';
 
-        if ($issue -> downlink) {
-            $access = true;
-            list($hostid, $instanceid, $issueid) = explode(':', $issue -> downlink);
-            if (!$hostid || $hostid === $CFG -> mnet_localhost_id) {
-                if ($DB -> record_exists('helpdesk_issue', ['id' => $issueid])) {
-                    $params = ['view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid];
-                    if (has_capability('local/helpdesk:seeissues', $context)) {
-                        $link = html_writer ::link($url, get_string('gotooriginal', 'local_helpdesk'));
-                    } else {
-                        $link = get_string('originalticketnoaccess', 'local_helpdesk');
-                    }
-                } else {
-                    $DB -> set_field('helpdesk_issue', 'downlink', '', ['id' => $issue -> id]);
-                }
-            } else {
-                $host = $DB -> get_record('mnet_host', ['id' => $hostid]);
-            }
-        }
+        return $str;
     }
+
 }
