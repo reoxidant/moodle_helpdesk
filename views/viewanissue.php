@@ -24,13 +24,10 @@ $issue -> owner = $DB -> get_record('user', ['id' => $issue -> assignedto]);
 
 echo $OUTPUT -> box_start('generalbox', 'bugreport');
 ?>
-
-<table style="padding: 5px;" class="helpdesk-issue">
-
-    <?php
-    if (helpdesk_can_workon($context, $issue)) {
-        // If I can resolve and I have seen, the bug is open
-        if ($issue -> status < OPEN) {
+    <table style="padding: 5px;" class="helpdesk-issue">
+        <?php
+        if ($issue -> status < OPEN && helpdesk_can_workon($context, $issue)) {
+            // If I can resolve and I have seen, the bug is open
             $oldstatus = $issue -> status;
             $issue -> status = OPEN;
             $DB -> set_field('helpdesk_issue', 'status', OPEN, ['id' => $issueid]);
@@ -43,22 +40,22 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
             $stc -> statusto = $issue -> status;
             $DB -> insert_record('helpdesk_state_change', $stc);
         }
-    }
-    if (helpdesk_can_edit($context, $issue)) {
-        echo $renderer -> edit_link($issue);
-    }
+        if (helpdesk_can_edit($context, $issue)) {
+            echo $renderer -> edit_link($issue);
+        }
 
-    try {
-        echo (new local_helpdesk_renderer) -> core_issue($issue);
-    } catch (coding_exception $e) {
-    }
+        try {
+            echo (new local_helpdesk_renderer(null, null)) -> core_issue($issue);
+        } catch (coding_exception $e) {
+        }
 
-/*    if($showhistorylink) {
-        echo $renderer->history($history, $statehistory, $initialviewmode);
-    }*/
-    ?>
-</table>
-
+        /*
+        if($showhistorylink) {
+            echo $renderer->history($history, $statehistory, $initialviewmode);
+        }
+        */
+        ?>
+    </table>
 <?php
-    echo $OUTPUT->box_end();
+echo $OUTPUT -> box_end();
 ?>

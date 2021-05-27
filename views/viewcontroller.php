@@ -15,7 +15,9 @@ if ($action === 'updatelist') {
         $status = required_param($akey, PARAM_INT);
 
         //Direct on new tab only resolve tickets
-        if ($status !== 3) {$view = 'view';}
+        if ($status !== 3) {
+            $view = 'view';
+        }
 
         if ($haschanged) {
             $issue = new StdClass;

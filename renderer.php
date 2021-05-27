@@ -76,7 +76,9 @@ class local_helpdesk_renderer extends plugin_renderer_base
         $activated = null;
         switch ($view) {
             case 'view' :
-                if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) $screen = 'tickets';
+                if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) {
+                    $screen = 'tickets';
+                }
                 if (has_capability('local/helpdesk:report', $context)) {
                     $rows[1][] = new tabobject('tickets', 'view.php?view=view&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
                 }

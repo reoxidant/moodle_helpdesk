@@ -35,7 +35,7 @@ if ($issueid) {
     }
 }
 
-if (!isloggedin() or isguestuser()) {
+if (!isloggedin() || isguestuser()) {
     require_login();
     die;
 }
@@ -80,7 +80,7 @@ if ($view === 'view') {
                 include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 break;
             case 'viewanissue':
-                if (!has_any_capability(['local/helpdesk:seeissues','local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
+                if (!has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
                     print_error('errornoaccessissue', 'local_helpdesk');
                 } else {
                     include($CFG -> dirroot . '/local/helpdesk/views/viewanissue.php');
@@ -110,7 +110,7 @@ if ($view === 'view') {
         $resolved = 0;
         include($CFG -> diroot . '/local/helpdesk/views/viewassignedtickets.php');
     } catch (Throwable $e) {
-        print_error('errorfindingaction', 'tracker', $action);
+        print_error('errorfindingaction', 'local_helpdesk', $action);
     }
 }
 

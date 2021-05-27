@@ -66,7 +66,9 @@ $selected = null;
 $activated = null;
 switch ($view) {
     case 'view' :
-        if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) $screen = 'tickets';
+        if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) {
+            $screen = 'tickets';
+        }
         if (has_capability('local/helpdesk:report', $context)) {
             $rows[1][] = new tabobject('tickets', 'view.php?view=view&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
         }
@@ -78,16 +80,24 @@ switch ($view) {
         }
         break;
     case 'resolved' :
-        if (!preg_match('/tickets|browse|work/', $screen)) $screen = 'tickets';
+        if (!preg_match('/tickets|browse|work/', $screen)) {
+            $screen = 'tickets';
+        }
         break;
     case 'profile':
-        if (!preg_match('/profile|preferences|watches|queries/', $screen)) $screen = 'profile';
+        if (!preg_match('/profile|preferences|watches|queries/', $screen)) {
+            $screen = 'profile';
+        }
         break;
     case 'reports':
-        if (!preg_match('/status|evolution|print/', $screen)) $screen = 'status';
+        if (!preg_match('/status|evolution|print/', $screen)) {
+            $screen = 'status';
+        }
         break;
     case 'admin':
-        if (!preg_match('/summary|manageelements|managenetwork/', $screen)) $screen = 'summary';
+        if (!preg_match('/summary|manageelements|managenetwork/', $screen)) {
+            $screen = 'summary';
+        }
         break;
     default:
 }
