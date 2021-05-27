@@ -80,7 +80,7 @@ function helpdesk_resolve_view()
  * @param false $resolved
  * @return int
  */
-function helpdesk_has_assigned_issues($resolved = false): int
+function helpdesk_has_assigned_issues(bool $resolved = false): int
 {
     $select = '
         issueid = ? AND
@@ -111,7 +111,7 @@ function helpdesk_has_assigned_issues($resolved = false): int
  * @throws dml_exception
  * @throws moodle_exception
  */
-function helpdesk_submit_issue_form(&$data): ?StdClass
+function helpdesk_submit_issue_form(&$data)
 {
     global $DB, $USER;
 

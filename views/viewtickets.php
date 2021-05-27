@@ -235,13 +235,11 @@ if (!empty($issues)) {
     echo '</div>';
 
 } else {
+    echo '<br/>';
+    echo '<br/>';
     if (!$resolved) {
-        echo '<br/>';
-        echo '<br/>';
         echo $OUTPUT -> notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
     } else {
-        echo '<br/>';
-        echo '<br/>';
         echo $OUTPUT -> notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
     }
 }
