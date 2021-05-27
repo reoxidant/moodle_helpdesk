@@ -31,7 +31,7 @@ $PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 
-$form = new HelpDeskIssueForm($url);
+$form = new reportissue_form($url);
 
 if (!$form -> is_cancelled() && $data = $form -> get_data()) {
     if (!$issue = helpdesk_submit_issue_form($data)) {

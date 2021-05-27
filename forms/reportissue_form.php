@@ -11,7 +11,7 @@ require_once $CFG -> libdir . '/formslib.php';
 /**
  * Class HelpDeskIssueForm
  */
-class HelpDeskIssueForm extends moodleform
+class reportissue_form extends moodleform
 {
 
     /**
@@ -35,13 +35,13 @@ class HelpDeskIssueForm extends moodleform
         $this -> context = context_system ::instance();
 
         $maxfiles = 99;
-        $maxbytes = $CFG->maxbytes;
+        $maxbytes = $CFG -> maxbytes;
 
         $this -> options = array(
             'trusttext' => true,
             'subdirs' => false,
             'maxfiles' => $maxfiles,
-            'maxbytes'  => $maxbytes,
+            'maxbytes' => $maxbytes,
             'context' => $this -> context
         );
 
@@ -59,29 +59,32 @@ class HelpDeskIssueForm extends moodleform
     }
 
     /**
-     * @return array|void
+     * @param $data
+     * @param null $files
+     * @return void
      */
     public function validation($data, $files = null)
     {
     }
 
     /**
-     *
+     * @param array|stdClass $default_values
+     * @throws coding_exception
      */
-    public function set_data($defaults)
+    public function set_data($default_values)
     {
-        $defaults -> description_editor['text'] = $defaults -> description;
-        $defaults -> description_editor['format'] = $defaults -> descriptionformat;
-        $defaults = file_prepare_standard_editor(
-            $defaults,
+        $default_values -> description_editor['text'] = $default_values -> description;
+        $default_values -> description_editor['format'] = $default_values -> descriptionformat;
+        $default_values = file_prepare_standard_editor(
+            $default_values,
             'description',
             $this -> options,
             $this -> context,
             'local_helpdesk',
             'issuedescription',
-            $defaults -> issueid
+            $default_values -> issueid
         );
 
-        parent ::set_data($defaults);
+        parent ::set_data($default_values);
     }
 }

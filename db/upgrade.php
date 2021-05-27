@@ -6,7 +6,7 @@
  * @package PhpStorm
  */
 
-function xmldb_local_helpdesk_upgrade($oldversion = 0)
+function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
 {
     global $DB;
 
