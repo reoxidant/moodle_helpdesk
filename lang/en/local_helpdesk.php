@@ -35,6 +35,8 @@ $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
 
+$string['turneditingon'] = 'Включить режим редактирования';
+
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
 $string['errorrecordissue'] = 'Не удалось создать новую заявку';
 $string['errornoaccessallissues'] = 'У вас нет доступа для просмотра всех заявок.';

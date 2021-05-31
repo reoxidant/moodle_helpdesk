@@ -126,7 +126,7 @@ $table = new flexible_table('local-helpdesk-issuelist');
 $table -> define_columns($tablecolumns);
 $table -> define_headers($tableheaders);
 
-$table -> define_baseurl(new moodle_url('/local/helpdesk/view.php', array('view' => $view, 'screen' => $screen)));
+$table -> define_baseurl(new moodle_url('/local/helpdesk/view.php', ['view' => $view, 'screen' => $screen]));
 
 $table -> sortable(true, 'priority', SORT_ASC);
 $table -> collapsible(true);
@@ -237,10 +237,10 @@ if (!empty($issues)) {
 } else {
     echo '<br/>';
     echo '<br/>';
-    if (!$resolved) {
-        echo $OUTPUT -> notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
-    } else {
+    if ($resolved) {
         echo $OUTPUT -> notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
+    } else {
+        echo $OUTPUT -> notification(get_string('noissuesreported', 'local_helpdesk'), 'box generalbox', 'notice');
     }
 }
 
