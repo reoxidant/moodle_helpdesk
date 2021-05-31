@@ -130,21 +130,20 @@ class local_helpdesk_renderer extends plugin_renderer_base
      * @throws coding_exception
      * @throws moodle_exception
      */
-    final public function edit_link(stdClass $issue): string
+    public function edit_link(stdClass $issue): string
     {
         $params = ['view' => 'view', 'screen' => 'editanissue', 'issueid' => $issue -> id];
 
         $issueurl = new moodle_url('/local/helpdesk/view.php', $params);
 
-        $str = '<tr>';
-        $str .= '<td colspan="4"  style="text-align: right">';
-        $str .= '<form method="post" action="' . $issueurl -> __toString() . '">';
-        $str .= '<input type="submit" name="go_btn" value="' . get_string('turneditingon', 'local_helpdesk') . '">';
-        $str .= '</form>';
-        $str .= '</td>';
-        $str .= '</tr>';
+        return '<tr>
+                    <td colspan="4"  style="text-align: right">
+                        <form method="post" action="' . $issueurl . '">
+                            <input type="submit" name="go_btn" value="' . get_string('turneditingon', 'local_helpdesk') . '">
+                        </form>
+                    </td>
+                </tr>';
 
-        return $str;
     }
 
     /**
@@ -152,25 +151,50 @@ class local_helpdesk_renderer extends plugin_renderer_base
      * @return string
      * @throws coding_exception
      */
-    final public function core_issue(stdClass $issue): string
+    public function core_issue(stdClass $issue): string
     {
-        $str = '<tr style="vertical-align:top">
+        global $OUTPUT;
+
+        if (!$issue -> owner) {
+            $assignedto = get_string('unassigned', 'local_helpdesk');
+        } else {
+            $assignedto = $OUTPUT -> user_picture($issue -> owner, ['size' => 35]) . '&nbsp;' . fullname($issue -> owner);
+        }
+
+        return '
+                <!--The name of issue-->
+                <tr style="vertical-align:top">
                     <td colspan="4" style="text-align:left" class="helpdesk-issue-summary">' . format_string($issue -> summary) . '</td>
-                </tr>';
-
-        $str .= '<tr style="vertical-align:top">
-                    <td style="text-align:right; width=25%" class="helpdesk-issue-param">
-                        <b>' . get_string('issuenumber', 'local_helpdesk') . ':</b><br/>
+                </tr>
+                <!--The reported user info-->
+                <tr style="vertical-align:top">
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('reportedby', 'local_helpdesk') . '</b>
                     </td>
-                    <td style="text-align:right; width=25%" class="helpdesk-issue-param">
-                       <b>' . get_string('status', 'local_helpdesk') . ':</b>
+                    <td style="width: 25%;" class="helpdesk-issue-value">
+                        ' . $OUTPUT -> user_picture($issue -> reporter) . '&nbsp;' . fullname($issue -> reporter) . '
                     </td>
-                    <td style="width: 25%" class="status_' . $STATUSKEYS[$issue -> status] . '">
-                       <b>' . $STATUSKEYS[$issue -> status] . '</b>
+                    <td style="vertical-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('datereported', 'local_helpdesk') . '</b>
                     </td>
-                 </tr>';
-
-        return $str;
+                    <td style="width: 25%;" class="helpdesk-issue-value">' . userdate($issue -> datereported) . '</td>
+                </tr>
+                <!--The assigned issue info-->
+                <tr style="vertical-align: top">
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('assignedto', 'local_helpdesk') . ':</b>
+                    </td>
+                    <td style="width: 25%" class="helpdesk-issue-value">
+                        ' . $assignedto . '
+                    </td>
+             
+                </tr>
+                <!--The description issue info-->
+                <tr style="vertical-align: top">
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        
+                    </td>
+                </tr>
+                ';
     }
-
 }
