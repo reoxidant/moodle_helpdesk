@@ -10,17 +10,18 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$initialviewmode = ($action === 'addcomment') ? 'visible' : 'hidden';
-$initialviewmodeforcss = ($action === 'register' || $action === 'unregister') ? 'visible' : 'hidden';
+//$initialviewmode = ($action === 'addcomment') ? 'visible' : 'hidden';
+//$initialviewmodeforcss = ($action === 'register' || $action === 'unregister') ? 'visible' : 'hidden';
 
 $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
 
 if (!$issue) {
     redirect('view.php?view=view&screen=tickets');
 }
-
-$issue -> reported = $DB -> get_record('user', ['id' => $issue -> reportedby]);
+$issue -> reporter = $DB -> get_record('user', ['id' => $issue -> reportedby]);
 $issue -> owner = $DB -> get_record('user', ['id' => $issue -> assignedto]);
+
+// Start printing.
 
 echo $OUTPUT -> box_start('generalbox', 'bugreport');
 ?>
@@ -33,8 +34,8 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
             $DB -> set_field('helpdesk_issue', 'status', OPEN, ['id' => $issueid]);
             // log state change
             $stc = new StdClass;
-            $stc -> issueid = $issue -> id;
             $stc -> userid = $USER -> id;
+            $stc -> issueid = $issue -> id;
             $stc -> timechange = time();
             $stc -> statusfrom = $oldstatus;
             $stc -> statusto = $issue -> status;
@@ -44,18 +45,7 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
             echo $renderer -> edit_link($issue);
         }
 
-        try {
-            echo (new local_helpdesk_renderer(null, null)) -> core_issue($issue);
-        } catch (coding_exception $e) {
-        }
-
-        /*
-        if($showhistorylink) {
-            echo $renderer->history($history, $statehistory, $initialviewmode);
-        }
-        */
+        echo $renderer -> core_issue($issue);
         ?>
     </table>
-<?php
-echo $OUTPUT -> box_end();
-?>
+<?= $OUTPUT -> box_end() ?>
