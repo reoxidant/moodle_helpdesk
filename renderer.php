@@ -153,7 +153,7 @@ class local_helpdesk_renderer extends plugin_renderer_base
      */
     public function core_issue(stdClass $issue): string
     {
-        global $OUTPUT;
+        global $OUTPUT, $STATUSCODES, $STATUSKEYS;
 
         if (!$issue -> owner) {
             $assignedto = get_string('unassigned', 'local_helpdesk');
@@ -166,16 +166,31 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 <tr style="vertical-align:top">
                     <td colspan="4" style="text-align:left" class="helpdesk-issue-summary">' . format_string($issue -> summary) . '</td>
                 </tr>
+                <!--The issue info-->
+                <tr style="vertical-align: top">
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('issuenumber', 'local_helpdesk') . ':</b><br/>
+                    </td>
+                    <td style="width: 25%" class="helpdesk-issue-value">
+                        ' . $issue -> id . '
+                    </td>
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('status', 'local_helpdesk') . ':</b>
+                    </td>
+                    <td style="width: 25%;" class="status_' . $STATUSCODES[$issue -> status] . ' helpdesk-issue-value">
+                        ' . $STATUSKEYS[$issue -> status] . '
+                    </td>
+                </tr>
                 <!--The reported user info-->
                 <tr style="vertical-align:top">
                     <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
-                        <b>' . get_string('reportedby', 'local_helpdesk') . '</b>
+                        <b>' . get_string('reportedby', 'local_helpdesk') . ':</b>
                     </td>
                     <td style="width: 25%;" class="helpdesk-issue-value">
                         ' . $OUTPUT -> user_picture($issue -> reporter) . '&nbsp;' . fullname($issue -> reporter) . '
                     </td>
-                    <td style="vertical-align: right; width: 25%;" class="helpdesk-issue-param">
-                        <b>' . get_string('datereported', 'local_helpdesk') . '</b>
+                    <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
+                        <b>' . get_string('datereported', 'local_helpdesk') . ':</b>
                     </td>
                     <td style="width: 25%;" class="helpdesk-issue-value">' . userdate($issue -> datereported) . '</td>
                 </tr>
@@ -192,7 +207,10 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 <!--The description issue info-->
                 <tr style="vertical-align: top">
                     <td style="text-align: right; width: 25%;" class="helpdesk-issue-param">
-                        
+                        <b>' . get_string('description') . ':</b>
+                    </td>
+                    <td style="text-align: left; width:75%;" colspan="3" class="helpdesk-issue-value">
+                        ' . format_text($issue -> description) . '
                     </td>
                 </tr>
                 ';
