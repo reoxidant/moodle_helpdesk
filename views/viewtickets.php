@@ -10,12 +10,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    // It must be included from view.php in mod/tracker
 }
 
-global $CFG, $DB;
+global $CFG, $DB, $STATUSKEYS, $FULLSTATUSKEYS;
 
 require_once($CFG -> libdir . '/tablelib.php');
-
-$FULLSTATUSKEYS = helpdesk_get_status_keys();
-$STATUSKEYS = helpdesk_get_status_keys();
 
 $limit = 20;
 $page = optional_param('page', 1, PARAM_INT);
