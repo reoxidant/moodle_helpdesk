@@ -25,7 +25,7 @@ if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen 
 }
 
 if ($view === 'reportanissue') {
-    redirect(new moodle_url('/local/helpdesk/view.php'));
+    redirect(new moodle_url('/local/helpdesk/reportissue.php'));
 }
 
 if ($issueid) {

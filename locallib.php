@@ -22,12 +22,17 @@ const RESOLVING = 2;
 const RESOLVED = 3;
 
 global $STATUSCODES;
+global $STATUSKEYS;
+global $FULLSTATUSKEYS;
 
 $STATUSCODES = array(
     OPEN => 'open',
     RESOLVING => 'resolving',
     RESOLVED => 'resolved'
 );
+
+$STATUSKEYS = helpdesk_get_status_keys();
+$FULLSTATUSKEYS = helpdesk_get_status_keys();
 
 /**
  * @return array|false|float|int|mixed|string|null
