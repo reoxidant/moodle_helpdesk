@@ -161,14 +161,9 @@ $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 if (!empty($issues)) {
     foreach ($issues as $issue) {
 
-        $issuenumber = "<a href=\"view.php?
-                           view=view&amp;
-                           issueid={$issue->id}\">{$issue->id}</a>";
+        $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
-        $summary = "<a href=\"view.php?
-                       view=view&amp;
-                       screen=viewanissue&amp;
-                       issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
+        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
         $datereported = date('Y/m/d H:i', $issue -> datereported);
 
@@ -228,9 +223,8 @@ if (!empty($issues)) {
     echo '<br/>';
 
     echo '<div style="text-align: center;">';
-    echo '<p><input type="submit" name="go_btn" value="' . get_string('savechanges') . '" /> </p>';
+    echo '<p><input type="submit" name="go_btn" value="' . get_string('savechanges') . '" /></p>';
     echo '</div>';
-
 } else {
     echo '<br/>';
     echo '<br/>';
