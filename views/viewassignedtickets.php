@@ -149,9 +149,7 @@ if (!empty($issues)) {
 
         $issuenumber = "<a href=\"view.php?view=view&amp;issueid={$issue->id}\">{$issue->id}</a>";
 
-        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">"
-            . format_string($issue -> summary) .
-            '</a>';
+        $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
         $datereported = date('Y/m/d H:i', $issue -> datereported);
 
