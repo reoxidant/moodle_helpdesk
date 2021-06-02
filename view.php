@@ -21,7 +21,7 @@ $url = new moodle_url('/local/helpdesk/view.php', ['view' => $view, 'screen' => 
 // Redirect
 
 if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen === 'editanissue') && empty($issueid)) {
-    redirect(new moodle_url('/local/helpdesk/view.php'), ['view' => 'view', 'screen' => 'browse']);
+    redirect(new moodle_url('/local/helpdesk/view.php', array('view' => 'view', 'screen' => 'browse')));
 }
 
 if ($view === 'reportanissue') {
@@ -53,6 +53,7 @@ $PAGE -> navbar -> add($pluginname);
 
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
+$result = 0;
 if ($action !== '') {
     if (($view === 'view')) {
         $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
@@ -85,9 +86,17 @@ if ($view === 'view') {
                 } else {
                     include($CFG -> dirroot . '/local/helpdesk/views/viewanissue.php');
                 }
+                break;
+            case 'editanissue':
+                if (!has_capability('/local/helpdesk/views/', $context)){
+                    print_error('errornoaccessissue', 'local_helpdesk');
+                } else {
+                    include($CFG->dirroot.'/local/helpdesk/views/editanissue.php');
+                }
         }
     }
 } elseif ($view === 'resolved') {
+    // TODO: Create 2 tabs MyResolve issue list and other
     if ($result !== -1) {
         switch ($screen) {
             case 'tickets':
@@ -105,13 +114,7 @@ if ($view === 'view') {
         }
     }
 } else {
-    try {
-        //default view
-        $resolved = 0;
-        include($CFG -> diroot . '/local/helpdesk/views/viewassignedtickets.php');
-    } catch (Throwable $e) {
-        print_error('errorfindingaction', 'local_helpdesk', $action);
-    }
+    print_error('errorfindingaction', 'local_helpdesk', $action);
 }
 
 echo $OUTPUT -> box_end();

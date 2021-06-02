@@ -45,13 +45,9 @@ function helpdesk_resolve_screen()
 
     $screen = optional_param('screen', @$SESSION -> helpdesk_current_screen, PARAM_ALPHA);
 
-    $context = context_system ::instance();
-
     if (empty($screen)) {
-        if ($context !== null) {
-            if (has_capability('local/helpdesk:report', $context)) {
-                $defaultscreen = 'tickets';
-            }
+        if (has_capability('local/helpdesk:report', context_system ::instance())) {
+            $defaultscreen = 'tickets';
         } else {
             $defaultscreen = 'browse';
         }
