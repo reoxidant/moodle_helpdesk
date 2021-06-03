@@ -54,12 +54,8 @@ $PAGE -> navbar -> add($pluginname);
 $renderer = $PAGE -> get_renderer('local_helpdesk');
 
 $result = 0;
-if ($action !== '') {
-    if (($view === 'view')) {
-        $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
-    } elseif ($view === 'resolved') {
-        $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
-    }
+if ($action !== '' && ($view === 'view' || $view === 'resolved')) {
+    $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
 }
 
 echo $OUTPUT -> header();
@@ -99,10 +95,6 @@ if ($view === 'view') {
     // TODO: Create 2 tabs MyResolve issue list and other
     if ($result !== -1) {
         switch ($screen) {
-            case 'tickets':
-                $resolved = 1;
-                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
-                break;
             case 'browse':
                 if (!has_capability('local/helpdesk:viewallissues', $context)) {
                     print_error('errornoaccessallissues', 'local_helpdesk');
@@ -110,6 +102,10 @@ if ($view === 'view') {
                     $resolved = 1;
                     include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 }
+                break;
+            default:
+                $resolved = 1;
+                include($CFG->dirroot . '/local/helpdesk/views/viewassignedtickets.php');
                 break;
         }
     }

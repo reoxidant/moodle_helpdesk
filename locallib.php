@@ -78,35 +78,6 @@ function helpdesk_resolve_view()
 }
 
 /**
- * @param false $resolved
- * @return int
- */
-function helpdesk_has_assigned_issues(bool $resolved = false): int
-{
-    $select = '
-        issueid = ? AND
-        assignedto = ?
-    ';
-
-    if ($resolved) {
-        $select .= '
-            AND
-            status IN (' . RESOLVED . ')
-        ';
-    } else {
-        $select .= '
-            AND
-            status NOT IN (' . RESOLVED . ')
-        ';
-    }
-
-    $search = [];
-
-    return 0;
-//    return $DB->count_records_select('tracker_issue', $select, $search);
-}
-
-/**
  * @param $data
  * @return StdClass|null
  * @throws dml_exception
