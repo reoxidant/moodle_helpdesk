@@ -2,9 +2,22 @@
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
-}
+} elseif ($action === 'updateanissue') {
 
-if ($action === 'updatelist') {
+    //action the editanissue form
+
+    $issue = new StdClass;
+
+    $issue -> id = required_param('issueid', PARAM_INT);
+    $issue -> issueid = $issue -> id;
+    $issue -> status = required_param('status', PARAM_INT);
+    $issue -> assignedto = required_param('assignedto', PARAM_INT);
+    $issue -> summary = required_param('summary', PARAM_TEXT);
+    $issue -> description_editor = required_param('summary', PARAM_TEXT);
+    $issue -> descriptionformat = $issue -> description_editor['format'];
+    $editoroptions = ['maxfiles' => 99, 'maxbytes' => $CFG -> maxbytes, 'context' => $context];
+
+} elseif ($action === 'updatelist') {
     $keys = array_keys($_POST);
     $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
     $assignedtokeys = preg_grep('/assignedto./', $keys);
