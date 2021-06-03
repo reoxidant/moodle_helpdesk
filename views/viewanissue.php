@@ -21,6 +21,19 @@ if (!$issue) {
 $issue -> reporter = $DB -> get_record('user', ['id' => $issue -> reportedby]);
 $issue -> owner = $DB -> get_record('user', ['id' => $issue -> assignedto]);
 
+// History of issue
+
+//'<a id="togglehistorylink"
+//    href="javascript:togglehistory()">'.
+//    get_string(($initialviewmode == 'visibledev') ? 'hide)
+//    '</a>&nbsp;-&nbsp;' : '';
+
+$history = $DB -> get_records_select(
+    'helpdesk_issueownership', ' issueid = ? ', [$issue->id], 'timeassigned DESC');
+$statehistory = $DB -> get_records_select(
+    'helpdesk_state_change', ' issueid = ? ', [$issue->id], 'timechange ASC');
+//$showhistorylink = (!empty($history) || !empty($statehistory)) ?
+
 // Start printing.
 
 echo $OUTPUT -> box_start('generalbox', 'bugreport');
@@ -47,5 +60,10 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
 
         echo $renderer -> core_issue($issue);
         ?>
+        <tr style="vertical-align: top;">
+            <td style="text-align: right" colspan="4">
+                <?php echo $showhistorylink.$showdependancieslink.$showcommentslink.$addcommentlink.$transferlink.$distribute; ?>
+            </td>
+        </tr>
     </table>
 <?= $OUTPUT -> box_end() ?>
