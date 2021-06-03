@@ -27,7 +27,7 @@ $string['issuenumber'] = 'Заявка';
 $string['unassigned'] = 'Неназначенно';
 $string['notickets'] = 'Нет назначенных заявок';
 $string['hassolution'] = 'Решение опублиновано для этой заявки';
-$string['noissuesreported'] = 'Тут нет заявок';
+$string['noissuesreported'] = 'Нет открытых заявок';
 $string['noissuesresolved'] = 'Нет решенных заявок';
 $string['reportedby'] = 'Опубликовано';
 
