@@ -33,12 +33,6 @@ class local_helpdesk_renderer extends plugin_renderer_base
 
             $select = 'status = ' . RESOLVED . ' AND reportedby = ? ';
             $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
-        } elseif ($screen === 'work') {
-            $select = 'status <> ' . RESOLVED . ' AND assignedto = ? ';
-            $totalissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
-
-            $select = 'status = ' . RESOLVED . ' AND assignedto = ? ';
-            $totalresolvedissues = $DB -> count_records_select('helpdesk_issue', $select, [$USER -> id]);
         } else {
             $select = 'status <> ' . RESOLVED;
             $totalissues = $DB -> count_records_select('helpdesk_issue', $select);
@@ -76,22 +70,25 @@ class local_helpdesk_renderer extends plugin_renderer_base
         $activated = null;
         switch ($view) {
             case 'view' :
-                if (!preg_match('/tickets|work|browse|search|viewanissue|editanissue/', $screen)) {
+                if (!preg_match('/tickets|browse|search|viewanissue|editanissue/', $screen)) {
                     $screen = 'tickets';
                 }
                 if (has_capability('local/helpdesk:report', $context)) {
                     $rows[1][] = new tabobject('tickets', 'view.php?view=view&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
-                }
-                if (helpdesk_has_assigned_issues()) {
-                    $rows[1][] = new tabobject('work', 'view.php?view=view&amp;screen=work', get_string('work', 'local_helpdesk'));
                 }
                 if (has_capability('local/helpdesk:viewallissues', $context)) {
                     $rows[1][] = new tabobject('browse', 'view.php?view=view&amp;screen=browse', get_string('browse', 'local_helpdesk'));
                 }
                 break;
             case 'resolved' :
-                if (!preg_match('/tickets|browse|work/', $screen)) {
+                if (!preg_match('/tickets|browse/', $screen)) {
                     $screen = 'tickets';
+                }
+                if(has_capability('local/helpdesk:report', $context)){
+                    $rows[1][] = new tabobject('tickets', 'view.php?view=resolved&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
+                }
+                if(has_capability('local/helpdesk:viewallissues', $context)){
+                    $rows[1][] = new tabobject('browse', 'view.php?view=resolved&amp;screen=browse', get_string('browse', 'local_helpdesk'));
                 }
                 break;
             case 'profile':
