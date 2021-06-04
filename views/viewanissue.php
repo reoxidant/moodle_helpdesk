@@ -10,8 +10,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-//$initialviewmode = ($action === 'addcomment') ? 'visible' : 'hidden';
-//$initialviewmodeforcss = ($action === 'register' || $action === 'unregister') ? 'visible' : 'hidden';
+$initialviewmode = ($action === 'addcomment') ? 'visiblediv' : 'hiddendiv';
+$initialviewmodeforcss = ($action === 'register' || $action === 'unregister') ? 'visiblediv' : 'hiddendiv';
 
 $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
 
@@ -29,10 +29,14 @@ $issue -> owner = $DB -> get_record('user', ['id' => $issue -> assignedto]);
 //    '</a>&nbsp;-&nbsp;' : '';
 
 $history = $DB -> get_records_select(
-    'helpdesk_issueownership', ' issueid = ? ', [$issue->id], 'timeassigned DESC');
+    'helpdesk_issueownership', ' issueid = ? ', [$issue -> id], 'timeassigned DESC');
 $statehistory = $DB -> get_records_select(
-    'helpdesk_state_change', ' issueid = ? ', [$issue->id], 'timechange ASC');
-//$showhistorylink = (!empty($history) || !empty($statehistory)) ?
+    'helpdesk_state_change', ' issueid = ? ', [$issue -> id], 'timechange ASC');
+$showhistorylink =
+    (!empty($history) || !empty($statehistory)) ?
+        '<a id="togglehistorylink" href="javascript:togglehistory()">'
+        . get_string(($initialviewmode === 'visiblediv') ? 'hidehistory' : 'showhistory', 'local_helpdesk') .
+        '</a>' : '';
 
 // Start printing.
 
@@ -62,7 +66,7 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
         ?>
         <tr style="vertical-align: top;">
             <td style="text-align: right" colspan="4">
-                <?php echo $showhistorylink.$showdependancieslink.$showcommentslink.$addcommentlink.$transferlink.$distribute; ?>
+                <?php echo $showhistorylink . $showdependancieslink . $showcommentslink . $addcommentlink . $transferlink . $distribute; ?>
             </td>
         </tr>
     </table>
