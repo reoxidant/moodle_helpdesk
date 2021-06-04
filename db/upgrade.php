@@ -49,23 +49,47 @@ function xmldb_local_helpdesk_upgrade($oldversion = 0): bool
         $table = new xmldb_table('helpdesk_state_change');
 
         // Adding fields to table helpdesk_state_change.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('issueid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timechange', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('statusfrom', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('statusto', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table -> add_field('issueid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('timechange', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('statusfrom', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table -> add_field('statusto', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table helpdesk_state_change.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for helpdesk_state_change.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        if (!$dbman -> table_exists($table)) {
+            $dbman -> create_table($table);
         }
 
         // Helpdesk savepoint reached.
         upgrade_plugin_savepoint(true, 2021051202, 'local', 'helpdesk');
+    }
+
+    if ($oldversion < 2021060400) {
+
+        // Define table helpdesk_issueownership to be created.
+        $table = new xmldb_table('helpdesk_issueownership');
+
+        // Adding fields to table helpdesk_issueownership.
+        $table -> add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table -> add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table -> add_field('issueid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table -> add_field('bywhomid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table -> add_field('timeassigned', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table helpdesk_issueownership.
+        $table -> add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for helpdesk_issueownership.
+        if (!$dbman -> table_exists($table)) {
+            $dbman -> create_table($table);
+        }
+
+        // Helpdesk savepoint reached.
+        upgrade_plugin_savepoint(true, XXXXXXXXXX, 'local', 'helpdesk');
     }
 
     return $result;
