@@ -84,10 +84,10 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 if (!preg_match('/tickets|browse/', $screen)) {
                     $screen = 'tickets';
                 }
-                if(has_capability('local/helpdesk:report', $context)){
+                if (has_capability('local/helpdesk:report', $context)) {
                     $rows[1][] = new tabobject('tickets', 'view.php?view=resolved&amp;screen=tickets', get_string('tickets', 'local_helpdesk'));
                 }
-                if(has_capability('local/helpdesk:viewallissues', $context)){
+                if (has_capability('local/helpdesk:viewallissues', $context)) {
                     $rows[1][] = new tabobject('browse', 'view.php?view=resolved&amp;screen=browse', get_string('browse', 'local_helpdesk'));
                 }
                 break;
@@ -211,5 +211,34 @@ class local_helpdesk_renderer extends plugin_renderer_base
                     </td>
                 </tr>
                 ';
+    }
+
+    function history($history, $statehistory, $initialviewmode)
+    {
+        global $DB, $OUTPUT, $STATUSCODES, $STATUSKEYS;
+
+        $str =
+            '<tr>
+                <td colspan="4" style="text-align: center; width: 100%">
+                    <table id="issuehistory" class="' . $initialviewmode . '" width="100%">
+                        <tr style="vertical-align: top">
+                            <td style="width: 50%">' . $OUTPUT -> heading(get_string('history', 'local_helpdesk')) . '</td>
+                            <td style="width: 50%">' . $OUTPUT -> heading(get_string('statehistory', 'local_helpdesk')) . '</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%">
+                                <table style="width: 100%"></table>
+                            </td>
+                            <td>
+                                <table style="width: 100%">
+                                    
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>';
+
+
     }
 }
