@@ -21,13 +21,6 @@ if (!$issue) {
 $issue -> reporter = $DB -> get_record('user', ['id' => $issue -> reportedby]);
 $issue -> owner = $DB -> get_record('user', ['id' => $issue -> assignedto]);
 
-// History of issue
-
-//'<a id="togglehistorylink"
-//    href="javascript:togglehistory()">'.
-//    get_string(($initialviewmode == 'visibledev') ? 'hide)
-//    '</a>&nbsp;-&nbsp;' : '';
-
 $history = $DB -> get_records_select(
     'helpdesk_issueownership', ' issueid = ? ', [$issue -> id], 'timeassigned DESC');
 $statehistory = $DB -> get_records_select(
@@ -43,6 +36,11 @@ $showhistorylink =
 echo $OUTPUT -> box_start('generalbox', 'bugreport');
 ?>
     <table style="padding: 5px;" class="helpdesk-issue">
+        <script type="text/javascript">
+            let showhistory = "<?php print_string("showhistory", "local_helpdesk")?>";
+            let hidehistory = "<?php print_string("hidehistory", "local_helpdesk")?>";
+        </script>
+        1
         <?php
         if ($issue -> status < OPEN && helpdesk_can_workon($context, $issue)) {
             // If I can resolve and I have seen, the bug is open
@@ -63,11 +61,24 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
         }
 
         echo $renderer -> core_issue($issue);
+
+        //Show Comments
+
+        //        $showcommentslink = '';
+        //        $addcommentlink = '';
+        //        $commentsscrount = $DB->count_records('helpdesk_issuecomment', ['issueid' => $issue->id]);
+
         ?>
         <tr style="vertical-align: top;">
             <td style="text-align: right" colspan="4">
-                <?php echo $showhistorylink . $showdependancieslink . $showcommentslink . $addcommentlink . $transferlink . $distribute; ?>
+                <?php echo $showhistorylink ?>
             </td>
         </tr>
+
+        <?php
+        if ($showhistorylink) {
+            echo $renderer -> history($history, $statehistory, $initialviewmode);
+        }
+        ?>
     </table>
 <?= $OUTPUT -> box_end() ?>

@@ -30,7 +30,8 @@ $string['hassolution'] = 'Решение опублиновано для это�
 $string['noissuesreported'] = 'Нет открытых заявок';
 $string['noissuesresolved'] = 'Нет решенных заявок';
 $string['reportedby'] = 'Опубликовано';
-
+$string['hidehistory'] = 'Скрыть историю';
+$string['showhistory'] = 'Показать историю';
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
