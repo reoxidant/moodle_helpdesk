@@ -10,6 +10,8 @@ require('../../config.php');
 require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 
+$PAGE->requires->js('/local/helpdesk/js/helpdeskview.js');
+
 $issueid = optional_param('issueid', '', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 
