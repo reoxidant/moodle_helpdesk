@@ -37,10 +37,9 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
 ?>
     <table style="padding: 5px;" class="helpdesk-issue">
         <script type="text/javascript">
-            let showhistory = "<?php print_string("showhistory", "local_helpdesk")?>";
-            let hidehistory = "<?php print_string("hidehistory", "local_helpdesk")?>";
+            let showhistory = "<?php print_string('showhistory', 'local_helpdesk')?>";
+            let hidehistory = "<?php print_string('hidehistory', 'local_helpdesk')?>";
         </script>
-        1
         <?php
         if ($issue -> status < OPEN && helpdesk_can_workon($context, $issue)) {
             // If I can resolve and I have seen, the bug is open
@@ -64,14 +63,18 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
 
         //Show Comments
 
-        //        $showcommentslink = '';
-        //        $addcommentlink = '';
-        //        $commentsscrount = $DB->count_records('helpdesk_issuecomment', ['issueid' => $issue->id]);
+        $showcommentslink = '';
+        $addcommentlink = '';
+        $commentscount = $DB -> count_records('helpdesk_issuecomment', ['issueid' => $issue -> id]);
+
+        if (has_capability('local/helpdesk:comment', $context)) {
+            $addcommentlink = '<a href=\"addcomment.php?issueid={$issueid}\">' . get_string('addcomment', 'local_helpdesk') . '</a>';
+        }
 
         ?>
         <tr style="vertical-align: top;">
             <td style="text-align: right" colspan="4">
-                <?php echo $showhistorylink ?>
+                <?= $showhistorylink ?>
             </td>
         </tr>
 
