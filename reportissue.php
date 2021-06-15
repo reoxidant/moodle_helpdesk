@@ -33,8 +33,11 @@ $PAGE -> set_heading($pluginname);
 
 $form = new reportissue_form($url);
 
-if (!$form -> is_cancelled() && $data = $form -> get_data()) {
-    if (!$issue = helpdesk_submit_issue_form($data)) {
+$data = $form -> get_data();
+$issue = helpdesk_submit_issue_form($data);
+
+if ($data && !$form -> is_cancelled()) {
+    if (!$issue) {
         print_error('errorcannotsubmitticket', 'local_helpdesk');
     }
 

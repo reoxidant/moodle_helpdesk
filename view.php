@@ -10,7 +10,7 @@ require('../../config.php');
 require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 
-$PAGE->requires->js('/local/helpdesk/js/helpdeskview.js');
+$PAGE -> requires -> js('/local/helpdesk/js/helpdeskview.js');
 
 $issueid = optional_param('issueid', '', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -18,11 +18,11 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $screen = helpdesk_resolve_screen();
 $view = helpdesk_resolve_view();
 
-$url = new moodle_url('/local/helpdesk/view.php', ['view' => $view, 'screen' => $screen]);
+$url = new moodle_url('/local/helpdesk/view.php', compact('view', 'screen'));
 
 // Redirect
 
-if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen === 'editanissue') && empty($issueid)) {
+if (($view === 'view') && (empty($screen) || ($screen === 'viewanissue') || ($screen === 'editanissue')) && empty($issueid)) {
     redirect(new moodle_url('/local/helpdesk/view.php', array('view' => 'view', 'screen' => 'browse')));
 }
 
@@ -57,7 +57,8 @@ $renderer = $PAGE -> get_renderer('local_helpdesk');
 
 $result = 0;
 if ($action !== '' && ($view === 'view' || $view === 'resolved')) {
-    $result = include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
+    include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
+    $result = 1;
 }
 
 echo $OUTPUT -> header();
@@ -79,18 +80,21 @@ if ($view === 'view') {
                 include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 break;
             case 'viewanissue':
-                if (!has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
-                    print_error('errornoaccessissue', 'local_helpdesk');
-                } else {
+                if (has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
                     include($CFG -> dirroot . '/local/helpdesk/views/viewanissue.php');
+                } else {
+                    print_error('errornoaccessissue', 'local_helpdesk');
                 }
                 break;
             case 'editanissue':
-                if (!has_capability('/local/helpdesk/views/', $context)){
-                    print_error('errornoaccessissue', 'local_helpdesk');
+                if (has_capability('/local/helpdesk/views/', $context)) {
+                    include($CFG -> dirroot . '/local/helpdesk/views/editanissue.php');
                 } else {
-                    include($CFG->dirroot.'/local/helpdesk/views/editanissue.php');
+                    print_error('errornoaccessissue', 'local_helpdesk');
                 }
+                break;
+            default:
+                break;
         }
     }
 } elseif ($view === 'resolved') {
@@ -98,16 +102,18 @@ if ($view === 'view') {
     if ($result !== -1) {
         switch ($screen) {
             case 'browse':
-                if (!has_capability('local/helpdesk:viewallissues', $context)) {
-                    print_error('errornoaccessallissues', 'local_helpdesk');
-                } else {
+                if (has_capability('local/helpdesk:viewallissues', $context)) {
                     $resolved = 1;
                     include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                } else {
+                    print_error('errornoaccessallissues', 'local_helpdesk');
                 }
+                break;
+            case 'test_any_screen':
                 break;
             default:
                 $resolved = 1;
-                include($CFG->dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
                 break;
         }
     }

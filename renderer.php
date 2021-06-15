@@ -13,14 +13,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_helpdesk_renderer extends plugin_renderer_base
 {
+
     /**
-     * @param String $view
-     * @param String $screen
+     * @param $view
+     * @param $screen
      * @return string
      * @throws coding_exception
      * @throws dml_exception
      */
-    final public function tabs(string $view, string $screen): string
+    public function tabs($view, $screen): string
     {
         global $OUTPUT, $DB, $USER;
 
@@ -122,12 +123,12 @@ class local_helpdesk_renderer extends plugin_renderer_base
     }
 
     /**
-     * @param stdClass $issue
+     * @param $issue
      * @return string
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function edit_link(stdClass $issue): string
+    public function edit_link($issue): string
     {
         $params = ['view' => 'view', 'screen' => 'editanissue', 'issueid' => $issue -> id];
 
@@ -144,18 +145,18 @@ class local_helpdesk_renderer extends plugin_renderer_base
     }
 
     /**
-     * @param stdClass $issue
+     * @param $issue
      * @return string
      * @throws coding_exception
      */
-    public function core_issue(stdClass $issue): string
+    public function core_issue($issue): string
     {
         global $OUTPUT, $STATUSCODES, $STATUSKEYS;
 
-        if (!$issue -> owner) {
-            $assignedto = get_string('unassigned', 'local_helpdesk');
-        } else {
+        if ($issue -> owner) {
             $assignedto = $OUTPUT -> user_picture($issue -> owner, ['size' => 35]) . '&nbsp;' . fullname($issue -> owner);
+        } else {
+            $assignedto = get_string('unassigned', 'local_helpdesk');
         }
 
         return '
@@ -213,32 +214,83 @@ class local_helpdesk_renderer extends plugin_renderer_base
                 ';
     }
 
-    function history($history, $statehistory, $initialviewmode)
+    /**
+     * @param $history
+     * @param $statehistory
+     * @param $initialviewmode
+     * @return String
+     * @throws coding_exception|dml_exception
+     */
+    public function history($history, $statehistory, $initialviewmode): string
     {
         global $DB, $OUTPUT, $STATUSCODES, $STATUSKEYS;
 
-        $str =
+        if (!empty($history)) {
+            foreach ($history as $owner) {
+                $user = $DB -> get_record('user', ['id' => $owner -> userid]);
+                $bywhom = $DB -> get_record('user', ['id' => $owner -> bywhomid]);
+
+                $ownerinfo .= '<tr>
+                    <td style="text-align: left">
+                        ' . userdate($owner -> timeassigned) . '
+                    </td>
+                    <td style="text-align: left">
+                        ' . $this -> user($user) . ' 
+                    </td>
+                    <td style="text-align: left">
+                        ' . get_string('by', 'local_helpdesk') . ' ' . fullname($bywhom) . '
+                    </td>
+                </tr>';
+            }
+        }
+
+        if (!empty($statehistory)) {
+            foreach ($statehistory as $state) {
+                $bywhom = $DB -> get_record('user', ['id' => $state -> userid]);
+
+                $stateinfo .= '<tr style="vertical-align: top">
+                        <td style="text-align: left">
+                            ' . userdate($state -> timechange) . '
+                        </td>
+                        <td style="text-align: left">
+                            ' . $this -> user($bywhom) . '
+                        </td>
+                        <td style="text-align: left">
+                            <span class="status_' . $STATUSCODES[$state -> statusfrom] . '">
+                                ' . $STATUSKEYS[$state -> statusform] . '
+                            </span>
+                        </td>
+                        <td style="text-align: left">
+                            <span class="status_' . $STATUSCODES[$state -> statusto] . '">
+                                ' . $STATUSKEYS[$state -> statusto] . '
+                            </span>
+                        </td>
+                    </tr>';
+            }
+        }
+
+        return
             '<tr>
                 <td colspan="4" style="text-align: center; width: 100%">
-                    <table id="issuehistory" class="' . $initialviewmode . '" width="100%">
+                    <table id="issuehistory" class="' . $initialviewmode . '" style="width: 100%">
                         <tr style="vertical-align: top">
                             <td style="width: 50%">' . $OUTPUT -> heading(get_string('history', 'local_helpdesk')) . '</td>
                             <td style="width: 50%">' . $OUTPUT -> heading(get_string('statehistory', 'local_helpdesk')) . '</td>
                         </tr>
                         <tr>
                             <td style="width: 50%">
-                                <table style="width: 100%"></table>
-                            </td>
-                            <td>
                                 <table style="width: 100%">
-                                    
+                                    ' . $ownerinfo . '
+                                </table>
+                            </td>
+                            <td style="width:50%">
+                                <table style="width: 100%">
+                                    ' . $stateinfo . '
                                 </table>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>';
-
-
     }
 }
