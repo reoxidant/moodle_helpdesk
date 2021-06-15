@@ -1,4 +1,5 @@
 function togglehistory() {
+    console.log("hello world")
     if (historydiv && historylink) {
         historydiv = document.getElementById("issuehistory");
         historylink = document.getElementById("togglehistorylink");
