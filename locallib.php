@@ -100,7 +100,8 @@ function helpdesk_submit_issue_form(&$data)
     $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
     $issue -> priority = $maxpriority + 1;
 
-    if ($issue -> id = $DB -> insert_record('helpdesk_issue', $issue)) {
+    $issue -> id = $DB -> insert_record('helpdesk_issue', $issue);
+    if ($issue -> id) {
         $data -> issueid = $issue -> id;
         return $issue;
     }
@@ -165,14 +166,10 @@ function helpdesk_can_workon(&$context, $issue = null): bool
     global $USER;
 
     if ($issue) {
-        if ($issue -> assignedto === $USER -> id && has_capability('local/helpdesk:resolve', $context)) {
-            return true;
-        }
-    } else if (has_capability('local/helpdesk:resolve', $context)) {
-        return true;
+        return $issue -> assignedto === $USER -> id && has_capability('local/helpdesk:resolve', $context);
     }
 
-    return false;
+    return has_capability('local/helpdesk:resolve', $context);
 }
 
 /**
@@ -183,17 +180,7 @@ function helpdesk_can_workon(&$context, $issue = null): bool
  */
 function helpdesk_can_edit(&$context, &$issue): bool
 {
-    if (has_capability('local/helpdesk:manage', $context)) {
-        return true;
-    }
-
-    if ($issue -> repotedby === $USER -> id) {
-        return true;
-    }
-
-    if ($issue -> assgnedto === $USER -> id && has_capability('local/helpdesk:resolve', $context)) {
-        return true;
-    }
-
-    return false;
+    return has_capability('local/helpdesk:manage', $context) ||
+        $USER -> id === $issue -> repotedby ||
+        ($issue -> assgnedto === $USER -> id && has_capability('local/helpdesk:resolve', $context));
 }
