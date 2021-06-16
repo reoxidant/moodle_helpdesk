@@ -1,17 +1,12 @@
 function togglehistory() {
-    console.log("hello world")
-    if (historydiv && historylink) {
-        historydiv = document.getElementById("issuehistory");
-        historylink = document.getElementById("togglehistorylink");
+    let historydiv = document.getElementById("issuehistory");
+    let historylink = document.getElementById("togglehistorylink");
 
-        if (historydiv.className === "visiblediv") {
-            historydiv.className = "hiddendiv";
-            historylink.innerText = showhistory;
-        } else {
-            historydiv.className = "visiblediv";
-            historylink.innerText = hidehistory;
-        }
+    if (historydiv.className === "visiblediv") {
+        historydiv.className = "hiddendiv";
+        historylink.innerText = showhistory;
+    } else {
+        historydiv.className = "visiblediv";
+        historylink.innerText = hidehistory;
     }
-
-    let historydiv, historylink;
 }
