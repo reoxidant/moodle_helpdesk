@@ -219,7 +219,7 @@ class local_helpdesk_renderer extends plugin_renderer_base
      * @param $statehistory
      * @param $initialviewmode
      * @return String
-     * @throws coding_exception|dml_exception
+     * @throws coding_exception|dml_exception|moodle_exception
      */
     public function history($history, $statehistory, $initialviewmode): string
     {
@@ -292,5 +292,37 @@ class local_helpdesk_renderer extends plugin_renderer_base
                     </table>
                 </td>
             </tr>';
+    }
+
+    /**
+     * @param $user
+     * @return string
+     * @throws moodle_exception
+     */
+    public function user($user): string
+    {
+        global $CFG, $OUTPUT;
+
+        $str = '';
+
+        if ($user) {
+            $str .= $OUTPUT -> user_picture($user, ['size' => 25]);
+            $userurl = new moodle_url('/user/view.php', ['id' => $user -> id]);
+            if ($CFG -> messaging) {
+                $str .= '<a href="' . $userurl . '">' . fullname($user) . '</a>
+                         <a href="" onclick="this.target=\'message\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">
+                            <img src="' . $OUTPUT -> image_url('t/message', 'core') . '" alt="t/message">
+                         </a>';
+            } elseif (!$user -> emailstop && $user -> maildisplay) {
+                $str .= '<a href="' . $userurl . '">' . fullname($user) . '</a>
+                         <a href="mailto:' . $user -> email . '">
+                            <img src="' . $OUTPUT -> image_url('t/mail', 'core') . '"  alt="t/mail">
+                         </a>';
+            } else {
+                $str .= fullname($user);
+            }
+        }
+
+        return $str;
     }
 }

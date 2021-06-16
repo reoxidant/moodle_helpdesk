@@ -35,6 +35,8 @@ $string['showhistory'] = 'Показать историю';
 $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
+$string['history'] = 'История назначений';
+$string['statehistory'] = 'История статусов';
 
 $string['turneditingon'] = 'Включить режим редактирования';
 

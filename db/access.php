@@ -76,4 +76,15 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
+    'local/helpdesk:comment' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetype' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    )
 );

@@ -2,7 +2,9 @@
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
-} elseif ($action === 'updateanissue') {
+}
+
+if ($action === 'updateanissue') {
 
     //action the editanissue form
 
@@ -41,7 +43,7 @@ if (!defined('MOODLE_INTERNAL')) {
             // MARK: check status changing and send notifications
             if ($oldstatus !== $issue -> status) {
                 $stc = new StdClass;
-                $stc -> usedid = $USER -> id;
+                $stc -> userid = $USER -> id;
                 $stc -> issueid = $issue -> id;
                 $stc -> timechange = time();
                 $stc -> statusform = $oldstatus;
