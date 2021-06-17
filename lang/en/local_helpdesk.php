@@ -36,7 +36,8 @@ $string['open'] = 'Открыта';
 $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
 $string['history'] = 'История назначений';
-$string['statehistory'] = 'История статусов';
+$string['statehistory'] = 'История операций';
+$string['addcomment'] = 'Добавить комментарий';
 
 $string['turneditingon'] = 'Включить режим редактирования';
 
