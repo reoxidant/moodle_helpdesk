@@ -14,13 +14,7 @@ require_once $CFG -> libdir . '/formslib.php';
 class reportissue_form extends moodleform
 {
 
-    /**
-     * @var
-     */
     public $options;
-    /**
-     * @var
-     */
     public $context;
 
     /**

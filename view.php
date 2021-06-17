@@ -94,7 +94,7 @@ if ($view === 'view') {
                 }
                 break;
             default:
-                break;
+                throw new Exception('Unexpected value');
         }
     }
 } elseif ($view === 'resolved') {
@@ -109,12 +109,12 @@ if ($view === 'view') {
                     print_error('errornoaccessallissues', 'local_helpdesk');
                 }
                 break;
-            case 'test_any_screen':
-                break;
-            default:
+            case 'tickets':
                 $resolved = 1;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
                 break;
+            default:
+                throw new Exception('Unexpected value');
         }
     }
 } else {

@@ -29,7 +29,7 @@ $showhistorylink =
     (!empty($history) || !empty($statehistory)) ?
         '<a id="togglehistorylink" href="javascript:togglehistory()">'
         . get_string(($initialviewmode === 'visiblediv') ? 'hidehistory' : 'showhistory', 'local_helpdesk') .
-        '</a>' : '';
+        '</a>&nbsp;-&nbsp;' : '';
 
 // Start printing.
 
@@ -68,13 +68,13 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
         $commentscount = $DB -> count_records('helpdesk_issuecomment', ['issueid' => $issue -> id]);
 
         if (has_capability('local/helpdesk:comment', $context)) {
-            $addcommentlink = '<a href=\"addcomment.php?issueid={$issueid}\">' . get_string('addcomment', 'local_helpdesk') . '</a>';
+            $addcommentlink = '<a href="addcomment.php?issueid='.$issueid.'">' . get_string('addcomment', 'local_helpdesk') . '</a>';
         }
 
         ?>
         <tr style="vertical-align: top;">
             <td style="text-align: right" colspan="4">
-                <?= $showhistorylink ?>
+                <?= $showhistorylink . $addcommentlink?>
             </td>
         </tr>
 

@@ -185,15 +185,15 @@ if (!empty($issues)) {
             has_capability('local/helpdesk:resolve', $context)) {
             $actions =
                 "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" 
-                    title=\"" . get_string('update') . "\" >
-                           <img src=\"" . $OUTPUT -> image_url('t/edit', 'core') . "\" alt=''/>
+                    title=\"" . get_string('update') . '" >
+                           <img src="' . $OUTPUT -> image_url('t/edit', 'core') . "\" alt=''/>
                 </a>";
         }
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $actions .=
-                "&nbsp;<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . "\" >
-                    <img src=\"" . $OUTPUT -> image_url('t/delete', 'core') . "\" alt=''/>
+                "&nbsp;<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . '" >
+                    <img src="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt=''/>
                 </a>";
         }
 

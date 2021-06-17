@@ -43,7 +43,7 @@ $rows[0][] = new tabobject('view', 'view.php?view=view',
 );
 
 $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
-    get_string('resolvedplural', 'local_helpdesk') . ' (' . $totalresolvedissue . ' ' .
+    get_string('resolvedplural', 'local_helpdesk') . ' (' . $totalresolvedissues . ' ' .
     get_string('issues', 'local_helpdesk') . ')'
 );
 
