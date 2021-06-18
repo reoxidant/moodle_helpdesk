@@ -28,6 +28,8 @@ require_once($CFG -> dirroot . '/local/helpdesk/lib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/locallib.php');
 require_once($CFG -> dirroot . '/local/helpdesk/forms/addcomment_form.php');
 
+$issueid = required_param('issueid', PARAM_INT);
+
 $context = context_system ::instance();
 
 require_login();
@@ -52,3 +54,51 @@ $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 
 $form = new addcomment_form(new moodle_url('/'), ['issueid' => $issueid]);
+
+if ($form -> is_cancelled()) {
+    redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid]));
+} else {
+    $data = $form -> get_data();
+
+    if($data) {
+        $comment = new StdClass();
+        $comment -> comment = $data -> comment_editor['text'];
+        $comment -> commentformat = $data -> comment_editor['format'];
+        $comment -> userid = $USER -> id;
+        $comment -> issueid = $issueid;
+        $comment -> datecreated = time();
+        $comment -> id = $DB -> insert_record('helpdesk_issuecomment', $comment);
+        if (!$comment -> id) {
+            print_error('cannotwritecomment', 'helpdesk_local');
+        }
+
+        // Stores files.
+        $data = file_postupdate_standard_editor(
+            $data,
+            'comment',
+            $form -> editoroptions,
+            $context,
+            'local_helpdesk',
+            'issuecomment',
+            $comment -> id
+        );
+
+        // Update back re-encoded field text content.
+        $DB -> set_field('helpdesk_issuecomment', 'comment', $data -> comment, ['id' => $comment -> id]);
+        redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid]));
+    }
+}
+
+echo $OUTPUT -> header();
+
+echo $OUTPUT -> heading($issue -> summary);
+
+$description = file_rewrite_pluginfile_urls($issue -> description, 'pluginfile.php', $context -> id, 'local_helpdesk', 'issuedescription', $issue -> id);
+
+echo $OUTPUT -> box(format_text($description, $issue -> descriptionformat), 'helpdesk-issue-description');
+
+echo $OUTPUT -> heading(get_string('addacomment', 'local_helpdesk'));
+
+$form -> display();
+
+echo $OUTPUT -> footer();

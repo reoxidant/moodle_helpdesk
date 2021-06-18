@@ -37,8 +37,8 @@ $string['resolving'] = 'В работе';
 $string['resolved'] = 'Закрыта';
 $string['history'] = 'История назначений';
 $string['statehistory'] = 'История операций';
-$string['addcomment'] = 'Добавить комментарий';
-
+$string['addacomment'] = 'Добавить комментарий';
+$string['comment'] = 'Комментарий';
 $string['turneditingon'] = 'Включить режим редактирования';
 
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
