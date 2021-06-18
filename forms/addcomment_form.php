@@ -22,14 +22,14 @@ class addcomment_form extends moodleform
         $this -> context = context_system ::instance();
         $maxfiles = 99;
         $maxbytes = $CFG -> maxbytes;
-        $this -> editoroptions = ['trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'context' => $this -> context];
+        $this -> editoroptions = ['trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $this -> context];
 
         $mform -> addElement('hidden', 'issueid', $issueid);
         $mform -> setType('issueid', PARAM_INT);
 
         $mform -> addElement('editor', 'comment_editor', get_string('comment', 'local_helpdesk'), $this -> editoroptions);
 
-        $mform -> add_action_buttons(true);
+        $this -> add_action_buttons();
     }
 
     /**
