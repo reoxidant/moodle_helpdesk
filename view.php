@@ -22,7 +22,7 @@ $url = new moodle_url('/local/helpdesk/view.php', compact('view', 'screen'));
 
 // Redirect
 
-if (($view === 'view') && (empty($screen) || ($screen === 'viewanissue') || ($screen === 'editanissue')) && empty($issueid)) {
+if ($view === 'view' && (empty($screen) || $screen === 'viewanissue' || $screen === 'editanissue') && empty($issueid)) {
     redirect(new moodle_url('/local/helpdesk/view.php', array('view' => 'view', 'screen' => 'browse')));
 }
 

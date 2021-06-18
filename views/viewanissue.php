@@ -68,7 +68,7 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
         $commentscount = $DB -> count_records('helpdesk_issuecomment', ['issueid' => $issue -> id]);
 
         if (has_capability('local/helpdesk:comment', $context)) {
-            $addcommentlink = '<a href="addcomment.php?issueid='.$issueid.'">' . get_string('addcomment', 'local_helpdesk') . '</a>';
+            $addcommentlink = '<a href="addcomment.php?issueid='.$issueid.'">' . get_string('addacomment', 'local_helpdesk') . '</a>';
         }
 
         ?>
