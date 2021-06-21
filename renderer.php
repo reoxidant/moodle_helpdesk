@@ -310,7 +310,7 @@ class local_helpdesk_renderer extends plugin_renderer_base
             $userurl = new moodle_url('/user/view.php', ['id' => $user -> id]);
             if ($CFG -> messaging) {
                 $str .= '<a href="' . $userurl . '">' . fullname($user) . '</a>
-                         <a href="" onclick="this.target=\'message\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">
+                         <a href="" onclick="this.target=\'message\'; return openpopup(\'/message/discussion.php?id=' . $user -> id . '\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">
                             <img src="' . $OUTPUT -> image_url('t/message', 'core') . '" alt="t/message">
                          </a>';
             } elseif (!$user -> emailstop && $user -> maildisplay) {
@@ -324,5 +324,30 @@ class local_helpdesk_renderer extends plugin_renderer_base
         }
 
         return $str;
+    }
+
+    public function print_comments($issueid): string
+    {
+        global $CFG, $DB;
+
+        $comments = $DB -> get_records('helpdesk_issuecomment', ['issueid' => $issueid], 'datecreated');
+
+        $html = '';
+
+        if ($comments) {
+            foreach ($comments as $comment) {
+                $user = $DB -> get_record('user', ['id' => $comment -> userid]);
+
+                $html .=
+                    '<tr>
+                        <td style="vertical-align: top; width: 30%" class="commenter">' . $this -> user($user) . '<br/>
+                            <span class="timelabel">' . userdate($comment -> datecreated) . '</span>
+                        </td>
+                        <td colspan="3" style="vertical-align: top" class="comment">' . $comment -> comment . '</td>
+                    </tr>';
+            }
+        }
+
+        return $html;
     }
 }

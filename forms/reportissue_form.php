@@ -25,7 +25,6 @@ class reportissue_form extends moodleform
     {
         global $CFG;
 
-        $issueid = 0;
         $this -> context = context_system ::instance();
 
         $maxfiles = 99;
@@ -40,7 +39,7 @@ class reportissue_form extends moodleform
         );
 
         $mform = $this -> _form;
-        $mform -> addElement('hidden', 'id', $issueid);
+        $mform -> addElement('hidden', 'id', $this -> _customdata['issueid'] ?? 0);
         $mform -> setType('id', PARAM_INT);
 
         $mform -> addElement('text', 'summary', get_string('summary', 'local_helpdesk'), array('size' => 80));

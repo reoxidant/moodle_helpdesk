@@ -98,7 +98,6 @@ if ($view === 'view') {
         }
     }
 } elseif ($view === 'resolved') {
-    // TODO: Create 2 tabs MyResolve issue list and other
     if ($result !== -1) {
         switch ($screen) {
             case 'browse':
@@ -110,11 +109,10 @@ if ($view === 'view') {
                 }
                 break;
             case 'tickets':
+            default:
                 $resolved = 1;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
                 break;
-            default:
-                throw new Exception('Unexpected value');
         }
     }
 } else {

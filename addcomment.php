@@ -53,7 +53,7 @@ $PAGE -> navbar -> add($pluginname);
 $PAGE -> set_title($pluginname);
 $PAGE -> set_heading($pluginname);
 
-$form = new addcomment_form(new moodle_url('/'), ['issueid' => $issueid]);
+$form = new addcomment_form(new moodle_url('/local/helpdesk/addcomment.php'), ['issueid' => $issueid]);
 
 if ($form -> is_cancelled()) {
     redirect(new moodle_url('/local/helpdesk/view.php', ['view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid]));

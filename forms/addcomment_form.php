@@ -16,7 +16,6 @@ class addcomment_form extends moodleform
      */
     protected function definition()
     {
-        $issueid = 0;
         $mform = $this -> _form;
 
         $this -> context = context_system ::instance();
@@ -24,7 +23,7 @@ class addcomment_form extends moodleform
         $maxbytes = $CFG -> maxbytes;
         $this -> editoroptions = ['trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $this -> context];
 
-        $mform -> addElement('hidden', 'issueid', $issueid);
+        $mform -> addElement('hidden', 'issueid', $this -> _customdata['issueid']);
         $mform -> setType('issueid', PARAM_INT);
 
         $mform -> addElement('editor', 'comment_editor', get_string('comment', 'local_helpdesk'), $this -> editoroptions);
