@@ -68,15 +68,28 @@ echo $OUTPUT -> box_start('generalbox', 'bugreport');
         $commentscount = $DB -> count_records('helpdesk_issuecomment', ['issueid' => $issue -> id]);
 
         if (has_capability('local/helpdesk:comment', $context)) {
-            $addcommentlink = '<a href="addcomment.php?issueid='.$issueid.'">' . get_string('addacomment', 'local_helpdesk') . '</a>';
+            $addcommentlink = '<a href="addcomment.php?issueid=' . $issueid . '">' . get_string('addacomment', 'local_helpdesk') . '</a>';
         }
 
         ?>
         <tr style="vertical-align: top;">
             <td style="text-align: right" colspan="4">
-                <?= $showhistorylink . $addcommentlink?>
+                <?= $showhistorylink . $addcommentlink ?>
             </td>
         </tr>
+
+        <?php
+        if (!empty($commentscount)) { ?>
+            <tr>
+                <td colspan="4">
+                    <div id="issuecomments" class="comments">
+                        <table style="width: 100%">
+                            <?= $renderer -> print_comments($issue -> id) ?>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        <?php } ?>
 
         <?php
         if ($showhistorylink) {
