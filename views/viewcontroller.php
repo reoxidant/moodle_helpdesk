@@ -15,10 +15,11 @@ if ($action === 'updateanissue') {
     $issue -> status = required_param('status', PARAM_INT);
     $issue -> assignedto = required_param('assignedto', PARAM_INT);
     $issue -> summary = required_param('summary', PARAM_TEXT);
-    $issue -> description_editor = required_param('summary', PARAM_TEXT);
+    $issue -> description_editor = required_param_array('description_editor', PARAM_CLEANHTML);
     $issue -> descriptionformat = $issue -> description_editor['format'];
     $editoroptions = ['maxfiles' => 99, 'maxbytes' => $CFG -> maxbytes, 'context' => $context];
 
+    $issue->resolution_editor = required_param_array('resolution_editor', PARAM_CLEANHTML);
 } elseif ($action === 'updatelist') {
     $keys = array_keys($_POST);
     $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
