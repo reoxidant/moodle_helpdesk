@@ -41,6 +41,7 @@ $string['addacomment'] = 'Добавить комментарий';
 $string['comment'] = 'Комментарий';
 $string['turneditingon'] = 'Включить режим редактирования';
 
+$string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
 $string['errorrecordissue'] = 'Не удалось создать новую заявку';
 $string['errornoaccessallissues'] = 'У вас нет доступа для просмотра всех заявок.';
