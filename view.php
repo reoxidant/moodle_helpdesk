@@ -87,7 +87,7 @@ if ($view === 'view') {
                 }
                 break;
             case 'editanissue':
-                if (has_capability('/local/helpdesk/views/', $context)) {
+                if (has_capability('local/helpdesk:manage', $context)) {
                     include($CFG -> dirroot . '/local/helpdesk/views/editanissue.php');
                 } else {
                     print_error('errornoaccessissue', 'local_helpdesk');
