@@ -180,7 +180,8 @@ function helpdesk_can_workon(&$context, $issue = null): bool
  */
 function helpdesk_can_edit(&$context, &$issue): bool
 {
-    return has_capability('local/helpdesk:manage', $context) ||
+    return
+        has_capability('local/helpdesk:manage', $context) ||
         $USER -> id === $issue -> repotedby ||
         ($issue -> assgnedto === $USER -> id && has_capability('local/helpdesk:resolve', $context));
 }
