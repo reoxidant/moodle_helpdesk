@@ -185,3 +185,14 @@ function helpdesk_can_edit(&$context, &$issue): bool
         $USER -> id === $issue -> repotedby ||
         ($issue -> assgnedto === $USER -> id && has_capability('local/helpdesk:resolve', $context));
 }
+
+/**
+ * @param $context
+ * @return array
+ * @throws coding_exception
+ */
+function helpdesk_getresolvers($context): array
+{
+    $allnames = get_all_user_name_fields(true, 'u');
+    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id' . $allnames, 'lastname', '', '', '', '', false);
+}
