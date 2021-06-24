@@ -120,8 +120,34 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                 </td>
             </tr>
             <tr>
-                <td style="text-align: right">
-
+                <td style="text-align: right; width: 25%" class="helpdesk-issue-param">
+                    <b><?php print_string('summary', 'helpdesk_local'); ?></b>
+                </td>
+                <td colspan="3" style="width: 75%;">
+                    <label>
+                        <input type="text" name="summary" size="70" value="<?= $issue -> summary ?>">
+                    </label>
+                </td>
+            </tr>
+            <tr style="vertical-align: top;">
+                <td style="text-align: right" height="25%" class="helpdesk-issue-param">
+                    <b><?php print_string('description') ?>:</b>
+                </td>
+                <td style="text-align: left; width: 75%" colspan="3">
+                    <?php
+                    $attributes = ['id' => 'id_description', 'name' => 'description_editor'];
+                    $values = [
+                        'text' => $issue -> description_editor['text'],
+                        'format' => $issue -> description_editor['format'],
+                        'itemid' => $issue -> description_editor['itemid']
+                    ];
+                    $options = [
+                        'maxfiles' => 99,
+                        'maxbytes' => $CFG -> maxbytes,
+                        'context' => $context
+                    ];
+                    echo helpdesk_print_direct_editor($attributes, $values, $options);
+                    ?>
                 </td>
             </tr>
         </table>
