@@ -196,3 +196,31 @@ function helpdesk_getresolvers($context): array
     $allnames = get_all_user_name_fields(true, 'u');
     return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id' . $allnames, 'lastname', '', '', '', '', false);
 }
+
+function helpdesk_print_direct_editor($attributes, $values, $options): string
+{
+    global $CFG, $PAGE;
+
+    require_once($CFG -> dirroot . '/repository/lib.php');
+
+    $ctx = $options['context'];
+
+    $id = $attributes['id'];
+    $elname = $attributes['name'];
+
+    $subdirs = @$options['subdirs'];
+    $maxbytes = @$options['maxbytes'];
+    $areamaxbytes = @$options['areamaxbytes'];
+    $maxfiles = @$options['maxfiles'];
+    $changeformat = @$options['changeformat'];
+
+    $text = $values['text'];
+    $format = $values['format'];
+    $draftitemid = $values['itemid'];
+
+    if (!isloggedin() || isguestuser()) {
+        $maxfiles = 0;
+    }
+
+    return '';
+}
