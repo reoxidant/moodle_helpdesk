@@ -123,10 +123,8 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                 <td style="text-align: right; width: 25%" class="helpdesk-issue-param">
                     <b><?php print_string('summary', 'helpdesk_local'); ?></b>
                 </td>
-                <td colspan="3" style="width: 75%;">
-                    <label>
-                        <input type="text" name="summary" size="70" value="<?= $issue -> summary ?>">
-                    </label>
+                <td colspan="3" style="vertical-align:center; text-align:left; width: 75%;">
+                    <label><input type="text" name="summary" size="70" value="<?= $issue -> summary ?>"></label>
                 </td>
             </tr>
             <tr style="vertical-align: top;">

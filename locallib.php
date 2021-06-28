@@ -197,7 +197,7 @@ function helpdesk_getresolvers($context): array
     return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id' . $allnames, 'lastname', '', '', '', '', false);
 }
 
-function helpdesk_print_direct_editor($attributes, $values, $options): string
+function helpdesk_print_direct_editor($attributes, $values, &$options): string
 {
     global $CFG, $PAGE;
 
@@ -221,6 +221,96 @@ function helpdesk_print_direct_editor($attributes, $values, $options): string
     if (!isloggedin() || isguestuser()) {
         $maxfiles = 0;
     }
+
+    $str = '<div>';
+
+    $editor = editors_get_preferred_editor($format);
+    $strformats = format_text_menu();
+    $formats = $editor -> get_supported_formats();
+    foreach ($formats as $fid) {
+        $formats[$fid] = $strformats;
+    }
+
+    // get filepicker info
+
+    if ($maxfiles != 0) {
+        if (empty($draftitemid)) {
+            // no existing area info provided - let's use fresh new draft are
+            require_once("$CFG->libdir/filelib.php");
+            $draftitemid = file_get_unused_draft_itemid();
+            echo "Generating fresh filearea $draftitemid";
+        }
+
+        $args = new stdClass();
+        // need these three to filter repositories list
+        $args -> accepted_types = ['web_image'];
+        $args -> return_types = @$options['return_types'];
+        $args -> context = $ctx;
+        $args -> env = 'filepicker';
+
+        // advimage plugin
+        $image_options = initialise_filepicker((array)$args);
+        $image_options -> context = $ctx;
+        $image_options -> client_id = uniqid();
+        $image_options -> maxbytes = @$options['maxbytes'];
+        $image_options -> areamaxbytes = @$options['areamaxbytes'];
+        $image_options -> env = 'editor';
+        $image_options -> itemid = $draftitemid;
+
+        //moodlemedia plugin
+        $args -> accepted_types = ['video', 'audio'];
+        $media_options = initialise_filepicker((array)$args);
+        $media_options -> context = $ctx;
+        $media_options -> client_id = uniqid();
+        $media_options -> maxbytes = @$options['maxbytes'];
+        $media_options -> areamaxbytes = @$options['areamaxbytes'];
+        $media_options -> env = 'editor';
+        $media_options -> itemid = $draftitemid;
+
+        //advlink plugin
+        $args -> accepted_types = '*';
+        $link_options = initialise_filepicker((array)$args);
+        $link_options -> context = $ctx;
+        $link_options -> client_id = uniqid();
+        $link_options -> maxbytes = @$options['maxbytes'];
+        $link_options -> areamaxbytes = @$options['areamaxbytes'];
+        $link_options -> env = 'editor';
+        $link_options -> itemid = $draftitemid;
+
+        $fpoptions['image'] = $image_options;
+        $fpoptions['media'] = $media_options;
+        $fpoptions['link'] = $link_options;
+    }
+
+    //If editor is required tinymce, then set required_tinymce option to initalize tinymce valodation.
+    if (($editor instanceof tinymce_texteditor) && !empty($attributes['onchange'])) {
+        $options['required'] = true;
+    }
+
+    $editor -> use_editor($id, $options, $fpoptions);
+
+    $rows = empty($attributes['rows']) ? 15 : $attributes['rows'];
+    $cols = empty($attributes['cols']) ? 80 : $attributes['cols'];
+
+    //Apply editor validation if required field
+    $editorrules = '';
+    if (!empty($attributes['onblur']) && !empty($attributes['onchange'])) {
+        $editorrules = ' onblur="' . htmlspecialchars($attributes['onblur']) . '" onchange="' . htmlspecialchars($attributes['onchange']) . '"';
+    }
+    $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . '"' . $editorrules . '>';
+    $str .= s($text);
+    $str .= '</textarea></div>';
+
+    $str .= '<div>';
+    if(count($formats) > 1) {
+        $str .= html_writer::label(get_string('format'), 'menu'. $elname. 'format', false, ['class' => 'accesshide']);
+
+        $str .= html_writer::select($formats, $elname.'[format]', $format, false, ['id' => 'menu', $elname.'format']);
+    } else {
+        $keys = array_keys($formats);
+//        $str .= html_writer::empty_tag('input', 'name' => $lname)
+    }
+    $str .= '</div>';
 
     return '';
 }
