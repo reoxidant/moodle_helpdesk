@@ -42,7 +42,7 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
 ?>
 
 <div style="text-align: center;">
-    <form action="local/helpdesk/view.php" name="editissue" method="post">
+    <form action="/local/helpdesk/view.php" name="editissue" method="post">
         <input type="hidden" name="issueid" value="<?php p($issueid) ?>"/>
         <input type="hidden" name="view" value="view"/>
         <input type="hidden" name="screen" value="viewanissue"/>
@@ -107,13 +107,13 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                         }
                         echo html_writer ::select($resolversmenu, 'assignedto', @$issue -> assignedto);
                     } else {
-                        print_string('noresolvers', 'helpdesk_local');
+                        print_string('noresolvers', 'local_helpdesk');
                         echo '<input type="hidden" name="assignedto" value="0" />';
                     }
                     ?>
                 </td>
                 <td style="text-align: right; width: 22%" class="helpdesk-issue-param">
-                    <b><?php print_string('status', 'helpdesk_local') ?>:</b>
+                    <b><?php print_string('status', 'local_helpdesk') ?>:</b>
                 </td>
                 <td style="width: 28%;" class="<?= 'status_' . $STATUSCODES[$issue -> status] ?>">
                     <?= html_writer ::select(helpdesk_get_status_keys(), 'status', $issue -> status) ?>
@@ -121,7 +121,7 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
             </tr>
             <tr>
                 <td style="text-align: right; width: 25%" class="helpdesk-issue-param">
-                    <b><?php print_string('summary', 'helpdesk_local'); ?></b>
+                    <b><?php print_string('summary', 'local_helpdesk'); ?></b>
                 </td>
                 <td colspan="3" style="vertical-align:center; text-align:left; width: 75%;">
                     <label><input type="text" name="summary" size="70" value="<?= $issue -> summary ?>"></label>
@@ -146,6 +146,28 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                     ];
                     echo helpdesk_print_direct_editor($attributes, $values, $options);
                     ?>
+                </td>
+            </tr>
+            <tr style="vertical-align: top">
+                <td style="text-align: right" height="25%" class="helpdesk-issue-param">
+                    <b><?php print_string('resolution', 'local_helpdesk'); ?>:</b>
+                </td>
+                <td style="text-align: left; width: 75%" colspan="3">
+                    <?php
+                    $attributes = ['id' => 'id_resolution', 'name' => 'resolution_editor'];
+                    $values = [
+                        'text' => $issue -> resolution_editor['text'],
+                        'format' => $issue -> resolution_editor['format'],
+                        'itemid' => $issue -> resolution_editor['itemid']
+                    ];
+                    $options = ['maxfiles' => 99, 'maxbytes' => $CFG -> maxbytes, 'context' => $context];
+                    echo helpdesk_print_direct_editor($attributes, $values, $options);
+                    ?>
+                </td>
+            </tr>
+            <tr style="vertical-align: top">
+                <td style="text-align: center" colspan="4">
+                    <input type="submit" value="<?php print_string('savechanges') ?>">
                 </td>
             </tr>
         </table>
