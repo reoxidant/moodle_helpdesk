@@ -54,5 +54,20 @@ if ($action === 'updateanissue') {
         }
     }
 
+    // always add a record for history
+    foreach($assignedtokeys as $akey) {
+        $issueid = str_replace('assignedto', '', $akey);
+        // new ownershop is triggered only when a change occured
+        $haschanged = optional_param('changed'.$issueid, 0, PARAM_INT);
+        if($haschanged) {
+            //save old assignment in history
+            $oldassign = $DB->get_record('helpdesk_issue', ['id' => $issueid]);
+            if($oldassign->assignedto != 0) {
+                $ownership = new StdClass;
+                $ownership -> issueid = $issueid;
+            }
+        }
+    }
+
     helpdesk_update_priority_stack();
 }
