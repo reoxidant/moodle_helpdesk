@@ -42,7 +42,7 @@ $string['comment'] = 'Комментарий';
 $string['turneditingon'] = 'Включить режим редактирования';
 $string['turneditingoff'] = 'Выключить режим редактирования';
 $string['noresolvers'] = 'Нет исполнителя';
-$string['status'] = 'Статус';
+$string['resolution'] = 'Решение';
 
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
