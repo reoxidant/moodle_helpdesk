@@ -282,7 +282,7 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
         $fpoptions['link'] = $link_options;
     }
 
-    //If editor is required tinymce, then set required_tinymce option to initalize tinymce valodation.
+    //If editor is required tinymce, then set required_tinymce option to initalize tinymce validation.
     if (($editor instanceof tinymce_texteditor) && !empty($attributes['onchange'])) {
         $options['required'] = true;
     }
@@ -297,20 +297,46 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
     if (!empty($attributes['onblur']) && !empty($attributes['onchange'])) {
         $editorrules = ' onblur="' . htmlspecialchars($attributes['onblur']) . '" onchange="' . htmlspecialchars($attributes['onchange']) . '"';
     }
-    $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . '"' . $editorrules . '>';
+    $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . ' " ' . $editorrules . ' > ';
     $str .= s($text);
     $str .= '</textarea></div>';
 
     $str .= '<div>';
-    if(count($formats) > 1) {
-        $str .= html_writer::label(get_string('format'), 'menu'. $elname. 'format', false, ['class' => 'accesshide']);
+    if (count($formats) > 1) {
+        $str .= html_writer ::label(get_string('format'), 'menu' . $elname . 'format', false, ['class' => 'accesshide']);
 
-        $str .= html_writer::select($formats, $elname.'[format]', $format, false, ['id' => 'menu', $elname.'format']);
+        $str .= html_writer ::select($formats, $elname . '[format]', $format, false, ['id' => 'menu', $elname . 'format']);
     } else {
         $keys = array_keys($formats);
-//        $str .= html_writer::empty_tag('input', 'name' => $lname)
+        $str .= html_writer ::empty_tag('input', ['name' => $elname . '[format]', 'type' => 'hidden', 'value' => array_pop($keys)]);
     }
     $str .= '</div>';
 
-    return '';
+    // during moodle installation, user area doesn't exist
+    // so we need to disable filepicker here.
+    // 0 means no files, -1 unlimited
+    if (!($maxfiles == 0) && empty($CFG -> adminsetuppending) && !during_initial_install()) {
+        $str .= '<input type="hidden" name="' . $elname . '[itemid]" value="' . $draftitemid . '" />';
+
+        // used by non js editor only
+        $editorurl = new moodle_url("$CFG->wwwroot/repository/draftfiles_manager.php", [
+            'action' => 'browse',
+            'env' => 'editor',
+            'itemid' => $draftitemid,
+            'subdirs' => $subdirs,
+            'maxbytes' => $maxbytes,
+            'areamaxbytes' => $areamaxbytes,
+            'maxfiles' => $maxfiles,
+            'ctx_id' => $ctx -> id,
+            'course' => $PAGE -> course -> id,
+            'sesskey' => sesskey()
+        ]);
+        $str .= '<noscript>';
+        $str .= "<div><object type='text/html' data='$editorurl' height='160' width='600' style='border: 1px solid #000'></object></div>";
+        $str .= '</noscript>';
+    }
+
+    $str .= '</div>';
+
+    return $str;
 }

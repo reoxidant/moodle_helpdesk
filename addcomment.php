@@ -69,7 +69,7 @@ if ($form -> is_cancelled()) {
         $comment -> datecreated = time();
         $comment -> id = $DB -> insert_record('helpdesk_issuecomment', $comment);
         if (!$comment -> id) {
-            print_error('cannotwritecomment', 'helpdesk_local');
+            print_error('cannotwritecomment', 'local_helpdesk');
         }
 
         // Stores files.
