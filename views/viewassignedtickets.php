@@ -71,8 +71,7 @@ $numrecords = $DB -> count_records_sql($sqlcount);
 
     <form name="manageform" action="/local/helpdesk/view.php" method="post">
         <input type="hidden" name="action" value="updatelist"/>
-
-        <input type="hidden" name="view" value="resolved"/>
+        <input type="hidden" name="view" value="view"/>
 <?php
 
 //Define table object.
