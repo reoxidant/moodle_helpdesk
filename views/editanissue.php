@@ -124,7 +124,7 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                     <b><?php print_string('summary', 'local_helpdesk'); ?></b>
                 </td>
                 <td colspan="3" style="vertical-align:center; text-align:left; width: 75%;">
-                    <label><input type="text" name="summary" size="70" value="<?= $issue -> summary ?>"></label>
+                    <label><input type="text" name="summary" size="150" value="<?= $issue -> summary ?>"></label>
                 </td>
             </tr>
             <tr style="vertical-align: top;">
