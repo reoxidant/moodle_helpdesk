@@ -194,7 +194,7 @@ function helpdesk_can_edit(&$context, &$issue): bool
 function helpdesk_getresolvers($context): array
 {
     $allnames = get_all_user_name_fields(true, 'u');
-    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id' . $allnames, 'lastname', '', '', '', '', false);
+    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id,'.$allnames, 'lastname', '', '', '', '', false);
 }
 
 function helpdesk_print_direct_editor($attributes, $values, &$options): string
