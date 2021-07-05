@@ -76,7 +76,22 @@ $issue = file_prepare_standard_editor($issue, 'resolution', $editoroptions, $con
                 <td style="text-align: right; width=22%" class="helpdesk-issue-param">
                     <b>Выбор категории:</b>
                 </td>
-                <td style="width:28%"></td>
+                <td style="width:28%">
+                    <?php $categories = helpdesk_getcategories() ?>
+                    <label>
+                        <select name="categories[]" multiple="multiple" size="5">
+                            <?php
+                            foreach ($categories as $category) {
+                                $selected = ($category -> selected) ? 'selected="selected"' : '';
+                                echo
+                                    '<option value="' . $dependacy -> id . ' " ' . $selected . ' > ' . $category -> id . ' - ' .
+                                    shorten_text(format_string($category -> summary)) .
+                                    '</option>\n';
+                            }
+                            ?>
+                        </select>
+                    </label>
+                </td>
             </tr>
             <tr>
                 <td style="text-align: right; width: 25%" class="helpdesk-issue-param">
