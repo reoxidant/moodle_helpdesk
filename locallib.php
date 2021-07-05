@@ -194,7 +194,7 @@ function helpdesk_can_edit(&$context, &$issue): bool
 function helpdesk_getresolvers($context): array
 {
     $allnames = get_all_user_name_fields(true, 'u');
-    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id,'.$allnames, 'lastname', '', '', '', '', false);
+    return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id,' . $allnames, 'lastname', '', '', '', '', false);
 }
 
 function helpdesk_print_direct_editor($attributes, $values, &$options): string
@@ -339,4 +339,70 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
     $str .= '</div>';
 
     return $str;
+}
+
+function helpdesk_getcategories(): array
+{
+    global $CFG, $DB;
+
+    $sql = '';
+
+    // TODO: Create the many to many sequence
+
+    /*
+    create table issue_category (id int, categoryname text);
+      insert into issue_category values
+       (1, 'Академическая задолженность')
+      ,(2, 'Выдача документов')
+      ,(3, 'Запрос документа');
+
+
+    create table users (id int, username text);
+        insert into users values
+        (1, 'Админ')
+       ,(2, 'Студент')
+       ,(3, 'Учитель');
+
+    create table issue_category_users (categoryid int, userid int);
+        insert into issue_category_users values
+        (1, 1)
+        ,(1, 2)
+        ,(1, 3)
+        ,(2, 1)
+        ,(2, 3)
+        ,(3, 2);
+    */
+
+    /*
+    select ic.*, group_concat(u.username)
+     from issue_category as ic
+    join issue_category_users as icu
+     on icu.categoryid = ic.id
+    join users as u
+     on u.id = icu.userid
+    group by ic.id;
+    */
+
+    /*$sql = '
+       SELECT
+          ic.id, group_concat(ic.name)
+       FROM
+          {helpdesk_usercategory} ic
+       LEFT JOIN
+          {user} u
+       ON
+          ic.userid = u.id
+       GROUP BY
+          ic.id';
+    */
+
+    if(!empty($sql)){
+        return $DB -> get_records_sql($sql);
+    }
+    $category = new stdClass;
+    $category -> id = 1;
+    $category -> summary = 'тестовая категория';
+    $category -> selected = true;
+
+    return array($category);
 }
