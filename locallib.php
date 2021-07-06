@@ -8,6 +8,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/filelib.php");
+
 /**
  *
  */
@@ -396,7 +398,7 @@ function helpdesk_getcategories(): array
           ic.id';
     */
 
-    if(!empty($sql)){
+    if (!empty($sql)) {
         return $DB -> get_records_sql($sql);
     }
     $category = new stdClass;
