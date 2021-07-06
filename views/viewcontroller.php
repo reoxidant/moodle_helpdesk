@@ -4,9 +4,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
+/****************************** update an issue ******************************/
 if ($action === 'updateanissue') {
-
-    //action the editanissue form
 
     $issue = new StdClass;
 
@@ -44,7 +43,38 @@ if ($action === 'updateanissue') {
 
     $issue -> datereported = required_param('datereported', PARAM_INT);
 
-} elseif ($action === 'updatelist') {
+    // if ownership has changed, prepare logging
+    $oldrecord = $DB -> get_record('helpdesk_issue', ['id' => $issue -> id]);
+    if ($oldrecord -> assignedto != $issue -> assignedto) {
+        $ownership = new StdClass;
+        $ownership -> issueid = $oldrecord -> id;
+        $ownership -> userid = $oldrecord -> assignedto;
+        $ownership -> bywhomid = $oldrecord -> bywhomid;
+        $ownership -> timeassigned = ($oldrecord -> timeassigned) ? $oldrecord -> timeassigned : time();
+        if (!$DB -> insert_record('helpdesk_issueownership', $ownership)) {
+            print_error('errorcannotlogoldownership', 'local_helpdesk');
+        }
+    }
+    $issue -> bywhoid = $USER -> id;
+    $issue -> timeassigned = time();
+
+    if (!$DB -> update_record('helpdesk_issue', $issue)) {
+        print_error('errorcannotupdateissue', 'local_helpdesk');
+    }
+
+    // send state change notification
+    if ($oldrecord -> status != $issue -> status) {
+
+        // log state change
+        $stc = new StdClass;
+        $stc -> userid = $USER -> id;
+        $stc -> timechange = time();
+        $stc -> statusfrom = $oldrecord -> status;
+        $stc -> statustp = $issue -> status;
+        $DB -> insert_record('helpdesk_state_change', $stc);
+    }
+} /****************************** updating list and status ******************************/
+elseif ($action === 'updatelist') {
     $keys = array_keys($_POST);
     $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
     $assignedtokeys = preg_grep('/assignedto./', $keys);
@@ -72,4 +102,40 @@ if ($action === 'updateanissue') {
     }
 
     helpdesk_update_priority_stack();
+} /****************************** delete an issue record ******************************/
+elseif ($action === 'delete') {
+    $issueid = required_param('issueid', PARAM_INT);
+
+    $maxpriority = $DB -> get_field('helpdesk_issue', 'resolutionpriority', ['id' => $issueid]);
+
+    $DB -> delete_records('helpdesk_issue', ['id' => $issueid]);
+    $commentids = $DB -> get_records('helpdesk_issue', ['issueid' => $issueid]);
+    $DB -> delete_records('helpdesk_issuecomment', ['issueid' => $issueid]);
+    $DB -> delete_records('helpdesk_issueownership', ['issueid' => $issueid]);
+    $DB -> delete_records('helpdesk_state_change', ['issueid' => $issueid]);
+
+    // lower priority of every issue above
+
+    $sql = '
+        UPDATE
+            {helpdesk_issue}
+        SET
+            resolutionpriority = resolutionpriority - 1
+        WHERE
+            resolutionpriority > ?
+    ';
+
+    $DB -> execute($sql, [$maxpriority]);
+
+    // clear all associated fileareas
+
+    $fs = get_file_storage();
+    $fs -> delele_area_files($context -> id, 'local_helpdesk', 'issuedescription', $issueid);
+    $fs -> delete_area_files($context -> id, 'local_helpdesk', 'issueresolution', $issueid);
+
+    if ($commentids) {
+        foreach ($commentids as $commentid => $void) {
+            $fs -> delete_area_files($context -> id, 'local_helpdesk', 'issuecomment', $commentid);
+        }
+    }
 }
