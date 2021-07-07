@@ -106,7 +106,7 @@ elseif ($action === 'updatelist') {
 elseif ($action === 'delete') {
     $issueid = required_param('issueid', PARAM_INT);
 
-    $maxpriority = $DB -> get_field('helpdesk_issue', 'resolutionpriority', ['id' => $issueid]);
+    $maxpriority = $DB -> get_field('helpdesk_issue', 'priority', ['id' => $issueid]);
 
     $DB -> delete_records('helpdesk_issue', ['id' => $issueid]);
     $commentids = $DB -> get_records('helpdesk_issue', ['issueid' => $issueid]);
@@ -120,9 +120,9 @@ elseif ($action === 'delete') {
         UPDATE
             {helpdesk_issue}
         SET
-            resolutionpriority = resolutionpriority - 1
+            priority = priority - 1
         WHERE
-            resolutionpriority > ?
+            priority > ?
     ';
 
     $DB -> execute($sql, [$maxpriority]);
