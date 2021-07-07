@@ -25,6 +25,15 @@ $capabilities = array(
         )
     ),
 
+    'local/helpdesk:managepriority' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetype' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'local/helpdesk:viewpriority' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
