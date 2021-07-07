@@ -186,13 +186,13 @@ if (!empty($issues)) {
 
         $status =
             '<div class=status_' . $STATUSCODES[$issue -> status] . ' 
-                  style="width: 110%; height:105%; text-align: center">' . $status .
+                  style="width: 100%; height:100%; text-align: center">' . $status .
             '</div>';
 
         $hassolution = $issue -> status === RESOLVED && !empty($issue -> resolution);
 
         $solution = ($hassolution) ?
-            '<img src="' . $OUTPUT -> image_url('solution', 'helpdesk') . '" height="15" 
+            '<img src="' . $OUTPUT -> image_url('solution', 'local_helpdesk') . '" height="15" 
                   alt="' . get_string('hassolution', 'local_helpdesk') . '" />' : '';
 
         $actions = '';
@@ -212,6 +212,25 @@ if (!empty($issues)) {
                     <img src ="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' />
                 </a>";
         }
+
+        // TODO: add actions
+
+        if (preg_match('/^priority/', $sort) && has_capability('local/helpdesk:managepriority', $context)) {
+            if ($issue -> priority < $maxpriority) {
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisetotop 
+                                title=" ' . get_string('raisetotop', 'local_helpdesk') . '">
+                                <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" style="border:0" alt=""/>
+                             </a>';
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisepriority 
+                                title=" ' . get_string('raisepriority', 'local_helpdesk') . ' ">
+                                <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" style="border:0" alt=""/>
+                             </a>';
+            } else {
+                $actions .= '<img src="' . $OUTPUT -> image_url('up_shadow', 'local_helpdesk') . '" style="border:0" />';
+                $actions .= '<img src="' . $OUTPUT -> image_url('totop_shadow', 'local_helpdesk') . '" style="border:0" />';
+            }
+        }
+
         if ($resolved) {
             $dataset = [$issuenumber, $summary . '' . $solution, $datereported, $reportedby, $assignedto, $status, $actions];
         } else {
