@@ -168,7 +168,7 @@ if (!empty($issues)) {
         }
         $status =
             '<div class="status_' . $STATUSCODES[$issue -> status] . '" 
-                  style="width: 110%; height: 105%; text-align:center">'
+                  style="width: 100%; height: 100%; text-align:center">'
             . $status .
             '</div>';
 
