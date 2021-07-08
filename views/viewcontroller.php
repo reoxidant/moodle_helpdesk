@@ -138,4 +138,73 @@ elseif ($action === 'delete') {
             $fs -> delete_area_files($context -> id, 'local_helpdesk', 'issuecomment', $commentid);
         }
     }
+} /****************************** raises the priority of the issue ******************************/
+elseif ($action == 'raisepriority') {
+    $issueid = required_param('issueid', PARAM_INT);
+    $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+    $nextissue = $DB -> get_record('helpdesk_issue', ['priority' => $issue -> priority + 1]);
+    if ($nextissue) {
+        $issue -> priority++;
+        $nextissue -> priority--;
+        $DB -> update_record('helpdesk_issue', $issue);
+        $DB -> update_record('helpdesk_issue', $nextissue);
+    }
+    helpdesk_update_priority_stack();
+} /****************************** raises the priority at top of list ******************************/
+elseif ($action == 'raisetotop') {
+    $issueid = required_param('issueid', PARAM_INT);
+    $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+    $maxpriority = $DB -> get_field('helpdesk_issue', 'priority', ['id' => $issueid]);
+    $nextissue = $DB -> get_record('helpdesk_issue', ['priority' => $issue -> priority - 1]);
+    if ($issue -> priority != $maxpriority) {
+        // lower everyone above
+
+        $sql = '
+            UPDATE
+                helpdesk_issue
+            SET
+                priority = priority - 1
+            WHERE
+                priority > ?
+        ';
+
+        $DB -> execute($sql, [$issue -> priority]);
+        // update to max priority
+        $issue -> priority = $maxpriority;
+        $DB -> update_record('helpdesk_issue', $issue);
+    }
+    helpdesk_update_priority_stack();
+} /****************************** lowers the priority of the issue ******************************/
+elseif ($action == 'lowerpriority') {
+    $issueid = required_param('issueid', PARAM_INT);
+    $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+    if ($issue -> priority > 0) {
+        $nextissue = $DB -> get_record('helpdesk_issue', ['priority' => $issue -> priority - 1]);
+        $issue -> priority--;
+        $nextissue -> priority++;
+        $DB -> update_record('helpdesk_issue', $issue);
+        $DB -> update_record('helpdesk_issue', $nextissue);
+    }
+    helpdesk_update_priority_stack();
+} /****************************** raises the priority at top of list  ******************************/
+elseif ($action == 'lowertobottom') {
+    $issueid = required_param('issueid', PARAM_INT);
+    $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+    if ($issue -> priority > 0) {
+        // raise everyone beneath
+        $sql = '
+            UPDATE
+                helpdesk_issue
+            SET
+                priority = priority + 1
+            WHERE
+                priority < ?
+        ';
+
+        $DB -> execute($sql, [$issue -> priority]);
+        // update to min priority
+        $issue -> priority = 0;
+        $DB -> update_record('helpdesk_issue', $issue);
+    }
+    helpdesk_update_priority_stack();
 }
