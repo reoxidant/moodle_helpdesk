@@ -6,6 +6,7 @@
  * @package PhpStorm
  */
 
+$string['by'] = '<i>Назначена: </i>';
 $string['pluginname'] = 'Центр поддержки';
 $string['view'] = 'Управление заявками';
 $string['resolvedplural'] = 'Закрыта';
@@ -43,7 +44,12 @@ $string['turneditingon'] = 'Включить режим редактирован
 $string['turneditingoff'] = 'Выключить режим редактирования';
 $string['noresolvers'] = 'Нет исполнителя';
 $string['resolution'] = 'Решение';
+$string['raisetotop'] = 'Сделать первым в списке';
+$string['raisepriority'] = 'Повысить приоритет';
+$string['lowerpriority'] = 'Понизить приоритет';
+$string['lowertobottom'] = 'Сделать последним в списке';
 
+$string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';
 $string['errorcannotsubmitticket'] = 'Ошибка регистрации новой заявки';
 $string['errorrecordissue'] = 'Не удалось создать новую заявку';
