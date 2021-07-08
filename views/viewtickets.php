@@ -215,19 +215,33 @@ if (!empty($issues)) {
 
         // TODO: add actions
 
-        if (preg_match('/^priority/', $sort) && has_capability('local/helpdesk:managepriority', $context)) {
+        if (strncmp($sort, 'priority', 8) === 0 && has_capability('local/helpdesk:managepriority', $context)) {
             if ($issue -> priority < $maxpriority) {
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisetotop 
-                                title=" ' . get_string('raisetotop', 'local_helpdesk') . '">
-                                <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" style="border:0" alt=""/>
+                                title=" ' . get_string('raisetotop', 'local_helpdesk') . ' ">
+                                <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" alt="" style="border:0"/>
                              </a>';
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisepriority 
                                 title=" ' . get_string('raisepriority', 'local_helpdesk') . ' ">
-                                <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" style="border:0" alt=""/>
+                                <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" alt="" style="border:0"/>
                              </a>';
             } else {
-                $actions .= '<img src="' . $OUTPUT -> image_url('up_shadow', 'local_helpdesk') . '" style="border:0" />';
-                $actions .= '<img src="' . $OUTPUT -> image_url('totop_shadow', 'local_helpdesk') . '" style="border:0" />';
+                $actions .= '<img src="' . $OUTPUT -> image_url('up_shadow', 'local_helpdesk') . '" style="border:0"/>';
+                $actions .= '<img src="' . $OUTPUT -> image_url('totop_shadow', 'local_helpdesk') . '" style="border:0"/>';
+            }
+
+            if ($issue -> priority != 0) {
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=lowerpriority" 
+                                title="' . get_string('lowerpriority', 'local_helpdesk') . '"/>
+                                <img src="' . $OUTPUT -> image_url('down', 'local_helpdesk') . '" alt="" style="border: 0">
+                            </a>';
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=lowertobottom" 
+                                title="' . get_string('lowertobottom', 'local_helpdesk') . '">
+                                <img src="' . $OUTPUT -> image_url('tobottom', 'local_helpdesk') . '" alt="" style="border: 0">
+                            </a>';
+            } else {
+                $actions .= '<img src="' . $OUTPUT -> image_url('down_shadow', 'local_helpdesk') . '" style="border: 0"/>';
+                $actions .= '<img src="' . $OUTPUT -> image_url('tobottom_shadow', 'local_helpdesk') . '" style="border: 0"/>';
             }
         }
 
@@ -239,14 +253,14 @@ if (!empty($issues)) {
         $table -> add_data($dataset);
     }
     $table -> finish_html();
-    echo '<br/>';
+    echo '<br />';
 
-    echo '<div style="text-align: center;">';
-    echo '<p><input type="submit" name="go_btn" value="' . get_string('savechanges') . '" /></p>';
-    echo '</div>';
+    echo '<div style = "text-align: center;">';
+    echo '<p ><input type = "submit" name = "go_btn" value = "' . get_string('savechanges') . '" /></p > ';
+    echo '</div > ';
 } else {
-    echo '<br/>';
-    echo '<br/>';
+    echo '<br />';
+    echo '<br />';
     if ($resolved) {
         echo $OUTPUT -> notification(get_string('noissuesresolved', 'local_helpdesk'), 'box generalbox', 'notice');
     } else {
