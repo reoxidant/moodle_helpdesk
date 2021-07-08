@@ -326,6 +326,12 @@ class local_helpdesk_renderer extends plugin_renderer_base
         return $str;
     }
 
+    /**
+     * @param $issueid
+     * @return string
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
     public function print_comments($issueid): string
     {
         global $CFG, $DB;

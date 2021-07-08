@@ -199,6 +199,14 @@ function helpdesk_getresolvers($context): array
     return get_users_by_capability($context, 'local/helpdesk:resolve', 'u.id,' . $allnames, 'lastname', '', '', '', '', false);
 }
 
+/**
+ * @param $attributes
+ * @param $values
+ * @param $options
+ * @return string
+ * @throws coding_exception
+ * @throws moodle_exception
+ */
 function helpdesk_print_direct_editor($attributes, $values, &$options): string
 {
     global $CFG, $PAGE;
@@ -343,13 +351,17 @@ function helpdesk_print_direct_editor($attributes, $values, &$options): string
     return $str;
 }
 
+// TODO: Create the many to many sequence
+
+/**
+ * @return stdClass[]
+ * @throws dml_exception
+ */
 function helpdesk_getcategories(): array
 {
     global $CFG, $DB;
 
     $sql = '';
-
-    // TODO: Create the many to many sequence
 
     /*
     create table issue_category (id int, categoryname text);
