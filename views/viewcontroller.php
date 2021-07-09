@@ -141,8 +141,8 @@ elseif ($action === 'delete') {
 } /****************************** raises the priority of the issue ******************************/
 elseif ($action == 'raisepriority') {
     $issueid = required_param('issueid', PARAM_INT);
-    $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
-    $nextissue = $DB -> get_record('helpdesk_issue', ['priority' => $issue -> priority + 1]);
+    $issue = $DB -> get_record('helpdesk_issue', array('id' => $issueid));
+    $nextissue = $DB -> get_record('helpdesk_issue', array('priority' => $issue -> priority + 1));
     if ($nextissue) {
         $issue -> priority++;
         $nextissue -> priority--;
@@ -154,14 +154,14 @@ elseif ($action == 'raisepriority') {
 elseif ($action == 'raisetotop') {
     $issueid = required_param('issueid', PARAM_INT);
     $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
-    $maxpriority = $DB -> get_field('helpdesk_issue', 'priority', ['id' => $issueid]);
-    $nextissue = $DB -> get_record('helpdesk_issue', ['priority' => $issue -> priority - 1]);
-    if ($issue -> priority != $maxpriority) {
-        // lower everyone above
+    $maxpriority = $DB -> get_field_select('helpdesk_issue', 'MAX(priority)', '');
 
+    if ($issue -> priority != $maxpriority) {
+
+        // lower everyone above
         $sql = '
             UPDATE
-                helpdesk_issue
+                {helpdesk_issue}
             SET
                 priority = priority - 1
             WHERE
@@ -190,11 +190,12 @@ elseif ($action == 'lowerpriority') {
 elseif ($action == 'lowertobottom') {
     $issueid = required_param('issueid', PARAM_INT);
     $issue = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+
     if ($issue -> priority > 0) {
         // raise everyone beneath
         $sql = '
             UPDATE
-                helpdesk_issue
+                {helpdesk_issue}
             SET
                 priority = priority + 1
             WHERE
