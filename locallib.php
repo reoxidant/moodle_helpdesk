@@ -138,6 +138,7 @@ function helpdesk_update_priority_stack()
 {
     global $DB;
 
+    // discards resolved
     $sql = '
         UPDATE
             {helpdesk_issue}
