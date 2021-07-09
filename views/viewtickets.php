@@ -217,11 +217,11 @@ if (!empty($issues)) {
 
         if (strncmp($sort, 'priority', 8) === 0 && has_capability('local/helpdesk:managepriority', $context)) {
             if ($issue -> priority < $maxpriority) {
-                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisetotop 
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisetotop"
                                 title=" ' . get_string('raisetotop', 'local_helpdesk') . ' ">
                                 <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" alt="" style="border:0"/>
                              </a>';
-                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisepriority 
+                $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisepriority"
                                 title=" ' . get_string('raisepriority', 'local_helpdesk') . ' ">
                                 <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" alt="" style="border:0"/>
                              </a>';
@@ -230,7 +230,7 @@ if (!empty($issues)) {
                 $actions .= '<img src="' . $OUTPUT -> image_url('totop_shadow', 'local_helpdesk') . '" style="border:0"/>';
             }
 
-            if ($issue -> priority != 0) {
+            if ($issue -> priority > 1) {
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=lowerpriority" 
                                 title="' . get_string('lowerpriority', 'local_helpdesk') . '"/>
                                 <img src="' . $OUTPUT -> image_url('down', 'local_helpdesk') . '" alt="" style="border: 0">
