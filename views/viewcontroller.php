@@ -109,7 +109,7 @@ elseif ($action === 'delete') {
     $maxpriority = $DB -> get_field('helpdesk_issue', 'priority', ['id' => $issueid]);
 
     $DB -> delete_records('helpdesk_issue', ['id' => $issueid]);
-    $commentids = $DB -> get_records('helpdesk_issue', ['issueid' => $issueid]);
+    $commentids = $DB -> get_records('helpdesk_issuecomment', ['issueid' => $issueid], 'id', 'id,id');
     $DB -> delete_records('helpdesk_issuecomment', ['issueid' => $issueid]);
     $DB -> delete_records('helpdesk_issueownership', ['issueid' => $issueid]);
     $DB -> delete_records('helpdesk_state_change', ['issueid' => $issueid]);
@@ -130,7 +130,7 @@ elseif ($action === 'delete') {
     // clear all associated fileareas
 
     $fs = get_file_storage();
-    $fs -> delele_area_files($context -> id, 'local_helpdesk', 'issuedescription', $issueid);
+    $fs -> delete_area_files($context -> id, 'local_helpdesk', 'issuedescription', $issueid);
     $fs -> delete_area_files($context -> id, 'local_helpdesk', 'issueresolution', $issueid);
 
     if ($commentids) {

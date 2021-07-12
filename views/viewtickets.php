@@ -134,17 +134,18 @@ $table -> set_attribute('id', 'issues');
 $table -> set_attribute('class', 'issuelist');
 $table -> set_attribute('width', '100%');
 
-$table -> set_attribute('priority', 'list_priority');
-$table -> set_attribute('id', 'list_issue_number');
-$table -> set_attribute('summary', 'list_summary');
-$table -> set_attribute('datereported', 'timelabel');
-$table -> set_attribute('reportedby', 'list_reportedby');
-$table -> set_attribute('assignedto', 'list_assignedto');
-$table -> set_attribute('status', 'list_status');
-$table -> set_attribute('action', 'list_action');
+$table -> column_class('priority', 'list_priority');
+$table -> column_class('id', 'list_issue_number');
+$table -> column_class('summary', 'list_summary');
+$table -> column_class('datereported', 'timelabel');
+$table -> column_class('reportedby', 'list_reportedby');
+$table -> column_class('assignedto', 'list_assignedto');
+$table -> column_class('status', 'list_status');
+$table -> column_class('action', 'list_action');
 
 $table -> setup();
 
+// Get extra query parameters from flexible_table behaviour.
 $where = $table -> get_sql_where();
 $sort = $table -> get_sql_sort();
 $table -> pagesize($limit, $numrecords);
@@ -180,8 +181,25 @@ if (!empty($issues)) {
                 html_writer ::select($STATUSKEYS,
                     "status{$issue->id}", 0, ['' => 'choose'],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
-                ) .
-                "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
+                ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
+
+            $managers = helpdesk_getmanagers($context);
+
+            if (!empty($managers)) {
+                $managersmenu = [];
+                foreach ($managers as $manager) {
+                    $managersmenu[$manager -> id] = fullname($manager);
+                }
+                $assignedto =
+                    html_writer ::select($managersmenu,
+                        "assignedto{$issue->id}", $issue -> assignedto,
+                        ['' => get_string('unassigned', 'local_helpdesk')],
+                        ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
+                    ) . "<input type=\"hidden\" name=\"changed{$issue->id}\" value=\"0\" />";
+            }
+        } else {
+            $status = $FULLSTATUSKEYS[0 + $issue -> status];
+            $assignedto = fullname($user);
         }
 
         $status =
@@ -202,28 +220,26 @@ if (!empty($issues)) {
             $actions =
                 "<a href=\"view.php?view=view&amp;issueid={$issue->id}&screen=editanissue\" 
                     title=\"" . get_string('update') . '" >
-                    <img src ="' . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' />
+                    <img src ="' . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' style='border:0'/>
                 </a>";
         }
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $actions .=
                 "<a href=\"view.php?issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . '" >
-                    <img src ="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' />
+                    <img src ="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' style='border:0'/>
                 </a>";
         }
-
-        // TODO: add actions
 
         if (strncmp($sort, 'priority', 8) === 0 && has_capability('local/helpdesk:managepriority', $context)) {
             if ($issue -> priority < $maxpriority) {
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisetotop"
                                 title=" ' . get_string('raisetotop', 'local_helpdesk') . ' ">
-                                <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" alt="" style="border:0"/>
+                                <img src="' . $OUTPUT -> image_url('totop', 'local_helpdesk') . '" alt="raisetotop" style="border:0"/>
                              </a>';
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=raisepriority"
                                 title=" ' . get_string('raisepriority', 'local_helpdesk') . ' ">
-                                <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" alt="" style="border:0"/>
+                                <img src="' . $OUTPUT -> image_url('up', 'local_helpdesk') . '" alt="raisepriority" style="border:0"/>
                              </a>';
             } else {
                 $actions .= '<img src="' . $OUTPUT -> image_url('up_shadow', 'local_helpdesk') . '" style="border:0"/>';
@@ -233,11 +249,11 @@ if (!empty($issues)) {
             if ($issue -> priority > 1) {
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=lowerpriority" 
                                 title="' . get_string('lowerpriority', 'local_helpdesk') . '"/>
-                                <img src="' . $OUTPUT -> image_url('down', 'local_helpdesk') . '" alt="" style="border: 0">
+                                <img src="' . $OUTPUT -> image_url('down', 'local_helpdesk') . '" alt="lowerpriority" style="border: 0">
                             </a>';
                 $actions .= '<a href="view.php?issueid=' . $issue -> id . '&action=lowertobottom" 
                                 title="' . get_string('lowertobottom', 'local_helpdesk') . '">
-                                <img src="' . $OUTPUT -> image_url('tobottom', 'local_helpdesk') . '" alt="" style="border: 0">
+                                <img src="' . $OUTPUT -> image_url('tobottom', 'local_helpdesk') . '" alt="lowertobottom" style="border: 0">
                             </a>';
             } else {
                 $actions .= '<img src="' . $OUTPUT -> image_url('down_shadow', 'local_helpdesk') . '" style="border: 0"/>';

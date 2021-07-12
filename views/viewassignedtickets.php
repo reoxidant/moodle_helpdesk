@@ -74,7 +74,7 @@ $numrecords = $DB -> count_records_sql($sqlcount);
         <input type="hidden" name="view" value="view"/>
 <?php
 
-//Define table object.
+//define table object
 
 $priority = get_string('priority', 'local_helpdesk');
 $issuenumber = get_string('issuenumber', 'local_helpdesk');
@@ -122,13 +122,13 @@ $table -> set_attribute('id', 'issues');
 $table -> set_attribute('class', 'listissue');
 $table -> set_attribute('width', '100%');
 
-$table -> set_attribute('priority', 'list_priority');
-$table -> set_attribute('id', 'list_issuenumber');
-$table -> set_attribute('summary', 'list_summary');
-$table -> set_attribute('datereported', 'timelabel');
-$table -> set_attribute('assignedto', 'list_assignedto');
-$table -> set_attribute('status', 'list_status');
-$table -> set_attribute('action', 'list_action');
+$table -> column_class('priority', 'list_priority');
+$table -> column_class('id', 'list_issuenumber');
+$table -> column_class('summary', 'list_summary');
+$table -> column_class('datereported', 'timelabel');
+$table -> column_class('assignedto', 'list_assignedto');
+$table -> column_class('status', 'list_status');
+$table -> column_class('action', 'list_action');
 
 $table -> setup();
 
@@ -151,20 +151,31 @@ if (!empty($issues)) {
         $summary = "<a href=\"view.php?view=view&amp;screen=viewanissue&amp;issueid={$issue->id}\">" . format_string($issue -> summary) . '</a>';
 
         $datereported = date('Y/m/d H:i', $issue -> datereported);
-
+        $user = $DB -> get_record('user', ['id' => $issue -> assignedto]);
         if (has_capability('local/helpdesk:manage', $context)) {
             $status = $FULLSTATUSKEYS[0 + $issue -> status] . '<br/>' .
                 html_writer ::select($STATUSKEYS,
-                    "status{$issue->id}", 0, ['' => 'choose'],
+                    "status{$issue->id}", 0, [],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
-                ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
+                );
 
-            $assignedto =
-                html_writer ::select([],
-                    "assignedto{$issue->id}", $issue -> assignedto,
-                    ['' => get_string('unassigned', 'local_helpdesk')],
-                    ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
-                ) . "<input type=\"hidden\" name=\"changed{$issue->id}\" value=\"0\" />";
+            $managers = helpdesk_getmanagers($context);
+
+            if (!empty($managers)) {
+                $managersmenu = [];
+                foreach ($managers as $manager) {
+                    $managersmenu[$manager -> id] = fullname($manager);
+                }
+                $assignedto =
+                    html_writer ::select($managersmenu,
+                        "assignedto{$issue->id}", $issue -> assignedto,
+                        ['' => get_string('unassigned', 'local_helpdesk')],
+                        ['onchange' => "document.forms['manageform'].changed{$issue->id}.value = 1;"]
+                    );
+            }
+        } else {
+            $status = $FULLSTATUSKEYS[0 + $issue -> status];
+            $assignedto = fullname($user);
         }
         $status =
             '<div class="status_' . $STATUSCODES[$issue -> status] . '" 
@@ -185,14 +196,14 @@ if (!empty($issues)) {
             $actions =
                 "<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&screen=editanissue\" 
                     title=\"" . get_string('update') . '" >
-                           <img src="' . $OUTPUT -> image_url('t/edit', 'core') . "\" alt=''/>
+                           <img src="' . $OUTPUT -> image_url('t/edit', 'core') . "\" alt='edit' style='border:0'/>
                 </a>";
         }
 
         if (has_capability('local/helpdesk:manage', $context)) {
             $actions .=
                 "&nbsp;<a href=\"view.php?view=resolved&amp;issueid={$issue->id}&action=delete\" title=\"" . get_string('delete') . '" >
-                    <img src="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt=''/>
+                    <img src="' . $OUTPUT -> image_url('t/delete', 'core') . "\" alt='delete' style='border:0'/>
                 </a>";
         }
 
