@@ -201,6 +201,17 @@ function helpdesk_getresolvers($context): array
 }
 
 /**
+ * @param $context
+ * @return array
+ * @throws coding_exception
+ */
+function helpdesk_getmanagers($context): array
+{
+    $allnames = get_all_user_name_fields(true, 'u');
+    return get_users_by_capability($context, 'local/helpdesk:manage', 'u.id,'.$allnames, 'lastname', '', '', '', '', false);
+}
+
+/**
  * @param $attributes
  * @param $values
  * @param $options
