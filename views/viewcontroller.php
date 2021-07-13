@@ -101,6 +101,42 @@ elseif ($action === 'updatelist') {
         }
     }
 
+    // always add a record for history
+
+    foreach ($assignedtokeys as $akey) {
+        $issueid = str_replace('assignedto', '', $akey);
+
+        // new ownership is triggered only when a change occured
+        $haschanged = optional_param('changed'.$issueid, 0, PARAM_INT);
+
+        if($haschanged) {
+            // save old assignment in history
+            $oldassign = $DB -> get_record('helpdesk_issue', ['id' => $issueid]);
+            if ($oldassignd -> assignedto != 0) {
+                $ownership = new StdClass;
+                $ownership -> issueid = $issueid;
+                $ownership -> userid = $oldassign -> assignedto;
+                $onwership -> bywhomid = $oldassign -> bywhomid;
+                $ownership -> timeassigned = 0 + @$oldassign -> timeassigned;
+                if (!$DB->insert_record('helpdesk_issueownership', $onwership)) {
+                    notice("Error saving ownership for issue $issueid");
+                }
+            }
+
+
+            // update actual helpdesk
+
+            $issue = new StdClass;
+            $issue -> id = $issueid;
+            $issue -> bywhomid = $USER->id;
+            $issue -> timeassigned = time();
+            $issue -> assignedto = required_param($akey, PARAM_INT);
+            if (!$DB -> update_record('helpdesk_issue', $issue)) {
+                notice("Error updating assignation for issue $issueid");
+            }
+        }
+    }
+
     helpdesk_update_priority_stack();
 } /****************************** delete an issue record ******************************/
 elseif ($action === 'delete') {

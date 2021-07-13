@@ -48,6 +48,10 @@ $string['raisetotop'] = 'Сделать первым в списке';
 $string['raisepriority'] = 'Повысить приоритет';
 $string['lowerpriority'] = 'Понизить приоритет';
 $string['lowertobottom'] = 'Сделать последним в списке';
+$string['managecategories'] = 'Управление категориями';
+$string['addcategory'] = 'Добавить категорию';
+$string['assignmanagers'] = 'Назначить менеджера';
+$string['addmanagers'] = 'Добавить менеджера';
 
 $string['errorcannotwritecomment'] = 'Ошибка записи комментария';
 $string['errornoaccessissue'] = 'У Вас нет доступа для просмотра этой заявки';

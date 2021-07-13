@@ -47,10 +47,8 @@ $rows[0][] = new tabobject('resolved', 'view.php?view=resolved',
     get_string('issues', 'local_helpdesk') . ')'
 );
 
-$rows[0][] = new tabobject('profile', 'view.php?view=profile', get_string('profile', 'local_helpdesk'));
-
-if (has_capability('local/helpdesk:configure', $context)) {
-    $rows[0][] = new tabobject('admin', 'view.php?view=admin', get_string('administration', 'local_helpdesk'));
+if (has_capability('local/helpdesk:manage', $context)) {
+    $rows[0][] = new tabobject('categories', 'view.php?view=categories', get_string('managecategories', 'local_helpdesk'));
 }
 
 // Render Subtabs
@@ -80,20 +78,13 @@ switch ($view) {
             $rows[1][] = new tabobject('browse', 'view.php?view=resolved&amp;screen=browse', get_string('browse', 'local_helpdesk'));
         }
         break;
-    case 'profile':
-        if (!preg_match('/profile|preferences|watches|queries/', $screen)) {
-            $screen = 'profile';
+    case 'categories':
+        if (!preg_match('/addcategory|assignmanagers|addmanagers/', $screen)) {
+            $screen = 'assignmanagers';
         }
-        break;
-    case 'reports':
-        if (!preg_match('/status|evolution|print/', $screen)) {
-            $screen = 'status';
-        }
-        break;
-    case 'admin':
-        if (!preg_match('/summary|manageelements|managenetwork/', $screen)) {
-            $screen = 'summary';
-        }
+        $rows[1][] = new tabobject('addcategory', 'view.php?view=categories&amp;screen=addcategory', get_string('addcategory', 'local_helpdesk'));
+        $rows[1][] = new tabobject('assignmanagers', 'view.php?view=categories&amp;screen=assignmanagers', get_string('assignmanagers', 'local_helpdesk'));
+        $rows[1][] = new tabobject('addmanagers', 'view.php?view=categories&amp;screen=addmanagers', get_string('addmanagers', 'local_helpdesk'));
         break;
     default:
 }
