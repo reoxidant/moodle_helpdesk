@@ -59,6 +59,9 @@ $result = 0;
 if ($action !== '' && ($view === 'view' || $view === 'resolved')) {
     include($CFG -> dirroot . '/local/helpdesk/views/viewcontroller.php');
     $result = 1;
+} elseif ($action !== '' && $view === 'categories') {
+    include($CFG -> diroot . '/local/helpdesk/views/categories.viewcontroller.php');
+    $result = 1;
 }
 
 echo $OUTPUT -> header();
@@ -72,9 +75,6 @@ if ($view === 'view') {
     if ($result !== -1) {
         switch ($screen) {
             case 'tickets':
-                $resolved = 0;
-                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
-                break;
             case 'browse':
                 $resolved = 0;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
@@ -94,27 +94,49 @@ if ($view === 'view') {
                 }
                 break;
             default:
-                throw new Exception('Unexpected value');
+                $resolved = 0;
+                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                break;
         }
     }
 } elseif ($view === 'resolved') {
     if ($result !== -1) {
         switch ($screen) {
+            case 'tickets':
             case 'browse':
                 if (has_capability('local/helpdesk:viewallissues', $context)) {
-                    $resolved = 1;
                     include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                    $resolved = 1;
                 } else {
                     print_error('errornoaccessallissues', 'local_helpdesk');
                 }
                 break;
-            case 'tickets':
             default:
-                $resolved = 1;
                 include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                $resolved = 1;
                 break;
         }
     }
+} elseif ($view === 'categories') {
+    if ($result !== -1) {
+        switch ($screen) {
+            case 'addcategory':
+                include($CFG -> dirroot . '/local/helpdesk/views/addcategory.php');
+                $resolved = 1;
+                break;
+            case 'assignmanagers':
+                include($CFG -> dirroot . '/local/helpdesk/views/assignmanagers.php');
+                $resolved = 1;
+                break;
+            case 'addmanagers':
+                include($CFG -> dirroot . '/local/helpdesk/views/addmanagers.php');
+                $resolved = 1;
+                break;
+            default:
+                break;
+        }
+    }
+
 } else {
     print_error('errorfindingaction', 'local_helpdesk', $action);
 }
