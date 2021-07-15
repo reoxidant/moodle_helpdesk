@@ -75,9 +75,8 @@ if ($view === 'view') {
     if ($result !== -1) {
         switch ($screen) {
             case 'tickets':
-            case 'browse':
                 $resolved = 0;
-                include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
                 break;
             case 'viewanissue':
                 if (has_any_capability(['local/helpdesk:seeissues', 'local/helpdesk:resolve', 'local/helpdesk:manage'], $context)) {
@@ -93,9 +92,10 @@ if ($view === 'view') {
                     print_error('errornoaccessissue', 'local_helpdesk');
                 }
                 break;
+            case 'browse':
             default:
                 $resolved = 0;
-                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
+                include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 break;
         }
     }
@@ -103,17 +103,20 @@ if ($view === 'view') {
     if ($result !== -1) {
         switch ($screen) {
             case 'tickets':
-            case 'browse':
-                if (has_capability('local/helpdesk:viewallissues', $context)) {
-                    include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                if (file_exists($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php')) {
                     $resolved = 1;
+                    include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
+                }
+                break;
+            case 'browse':
+            default:
+                if (has_capability('local/helpdesk:viewallissues', $context) &&
+                    file_exists($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php')) {
+                    $resolved = 1;
+                    include($CFG -> dirroot . '/local/helpdesk/views/viewtickets.php');
                 } else {
                     print_error('errornoaccessallissues', 'local_helpdesk');
                 }
-                break;
-            default:
-                include($CFG -> dirroot . '/local/helpdesk/views/viewassignedtickets.php');
-                $resolved = 1;
                 break;
         }
     }
@@ -122,17 +125,13 @@ if ($view === 'view') {
         switch ($screen) {
             case 'addcategory':
                 include($CFG -> dirroot . '/local/helpdesk/views/addcategory.php');
-                $resolved = 1;
-                break;
-            case 'assignmanagers':
-                include($CFG -> dirroot . '/local/helpdesk/views/assignmanagers.php');
-                $resolved = 1;
                 break;
             case 'addmanagers':
                 include($CFG -> dirroot . '/local/helpdesk/views/addmanagers.php');
-                $resolved = 1;
                 break;
+            case 'assignmanagers':
             default:
+                include($CFG -> dirroot . '/local/helpdesk/views/assignmanagers.php');
                 break;
         }
     }
