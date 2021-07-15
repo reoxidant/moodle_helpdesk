@@ -34,7 +34,7 @@ if ($resolved) {
     ';
 }
 
-$sql = "
+$sql = '
         SELECT
             i.id,
             i.summary,
@@ -45,8 +45,8 @@ $sql = "
         FROM
             {helpdesk_issue} i
         WHERE
-            i.reportedby = {$USER->id}
-            $resolvedclause
+            i.reportedby = ' . $USER -> id . '
+            ' . $resolvedclause . '
         GROUP BY
             i.id,
             i.summary,
@@ -54,17 +54,17 @@ $sql = "
             i.assignedto,
             i.status,
             i.priority
-    ";
+    ';
 
-$sqlcount = "
+$sqlcount = '
         SELECT
             COUNT(*)
         FROM
             {helpdesk_issue} i
         WHERE
-            i.reportedby = {$USER->id}
-            $resolvedclause
-    ";
+            i.reportedby = ' . $USER -> id . '
+            ' . $resolvedclause . '
+    ';
 
 $numrecords = $DB -> count_records_sql($sqlcount);
 ?>
@@ -136,7 +136,7 @@ $where = $table -> get_sql_where();
 $sort = $table -> get_sql_sort();
 $table -> pagesize($limit, $numrecords);
 
-if ($sort !== null) {
+if ($sort != '') {
     $sql .= " ORDER BY $sort";
 }
 
@@ -157,8 +157,7 @@ if (!empty($issues)) {
                 html_writer ::select($STATUSKEYS,
                     "status{$issue->id}", 0, [],
                     ['onchange' => "document.forms['manageform'].schanged{$issue->id}.value = 1;"]
-                );
-
+                ) . "<input type=\"hidden\" name=\"schanged{$issue->id}\" value=\"0\" />";
             $managers = helpdesk_getmanagers($context);
 
             if (!empty($managers)) {
