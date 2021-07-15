@@ -150,7 +150,7 @@ $where = $table -> get_sql_where();
 $sort = $table -> get_sql_sort();
 $table -> pagesize($limit, $numrecords);
 
-if ($sort !== null) {
+if ($sort != '') {
     $sql .= " ORDER BY $sort";
 } else {
     $sql .= ' ORDER BY priority ASC';

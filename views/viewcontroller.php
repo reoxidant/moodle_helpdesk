@@ -76,9 +76,9 @@ if ($action === 'updateanissue') {
 } /****************************** updating list and status ******************************/
 elseif ($action === 'updatelist') {
     $keys = array_keys($_POST);
-    $statuskeys = preg_grep('/status./', $keys);              // filter out only the status
-    $assignedtokeys = preg_grep('/assignedto./', $keys);
-    $newassignedtokeys = preg_grep('/assignedtoi./', $keys);
+    $statuskeys = preg_grep('/status./' , $keys);              // filter out only the status
+    $assignedtokeys = preg_grep('/assignedto./' , $keys);      // filter out only the assigned updating
+    $newassignedtokeys = preg_grep('/assignedtoi./' , $keys);
     foreach ($statuskeys as $akey) {
         $issueid = str_replace('status', '', $akey);
         $haschanged = optional_param('schanged' . $issueid, 0, PARAM_INT);

@@ -22,3 +22,62 @@
  * @auther     vshapovalov
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+require('../../../config.php');
+
+require_once($CFG -> dirroot . 'local/helpdesk/lib.php');
+require_once($CFG -> dirroot . 'local/helpdesk/locallib.php');
+require_once($CFG -> dirroot . 'local/helpdesk/forms/reportissue_form.php');
+
+$screen = helpdesk_resolve_screen();
+$view = helpdesk_resolve_view();
+
+$context = context_system ::instance();
+
+require_login();
+require_capability('local/helpdesk:report', $context);
+
+$pluginname = get_string('pluginname', 'local_helpdesk');
+
+$url = new moodle_url('/local/helpdesk/addcategory.php');
+
+$context = context_system ::instance();
+$PAGE -> set_url($url);
+$PAGE -> set_context($context);
+$PAGE -> set_pagelayout('standard');
+$PAGE -> navbar -> add($pluginname);
+$PAGE -> set_title($pluginname);
+$PAGE -> set_heading($pluginname);
+
+$form = new addcategory_form($url);
+
+if ($form -> is_cancelled()) {
+    $params = compact('view', 'screen');
+    redirect(new moodle_url('/local/helpdesk/view.php', $params));
+}
+
+$data = $form -> get_data();
+
+if ($data) {
+    $category = new StdClass;
+    $category -> name = $data -> name;
+    $category -> description = $data -> description;
+    if ($data -> categoryid) {
+        $category -> id = $data -> categoryid;
+        $DB -> update_record('helpdesk_categories', $category);
+    } else {
+        $category -> id = $DB -> insert_record('helpdesk_categories', $category);
+    }
+
+    $params = compact('view', 'screen');
+    redirect(new moodle_url('/local/helpdesk/view.php'));
+}
+
+echo $OUTPUT -> header();
+
+echo $OUTPUT -> heading(get_string('addcategory', 'local_helpdesk'));
+
+$form -> set_data($data);
+$form -> display();
+
+echo $OUTPUT -> footer();
