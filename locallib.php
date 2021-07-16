@@ -208,7 +208,7 @@ function helpdesk_getresolvers($context): array
 function helpdesk_getmanagers($context): array
 {
     $allnames = get_all_user_name_fields(true, 'u');
-    return get_users_by_capability($context, 'local/helpdesk:manage', 'u.id,'.$allnames, 'lastname', '', '', '', '', false);
+    return get_users_by_capability($context, 'local/helpdesk:manage', 'u.id,' . $allnames, 'lastname', '', '', '', '', false);
 }
 
 /**
@@ -431,4 +431,38 @@ function helpdesk_getcategories(): array
     $category -> selected = true;
 
     return array($category);
+}
+
+/**
+ * @param null $prefix
+ * @return false|mixed
+ * @throws moodle_exception
+ */
+function helpdesk_categories_param_action($prefix = null)
+{
+
+    if ($prefix == null) {
+        $prefix = 'act_';
+    }
+
+    $action = false;
+
+    if ($_POST) {
+        $form_vars = $_POST;
+    } elseif ($_GET) {
+        $form_vars = $_GET;
+    }
+    if ($form_vars) {
+        foreach ($form_vars as $key => $value) {
+            if (preg_match("/$prefix(.+)/", $key, $matches)) {
+                $action = $matches[1];
+                break;
+            }
+        }
+    }
+    if ($action && !preg_match('/^\w+$/', $action)) {
+        $action = false;
+        print_error('unknowaction');
+    }
+    return $action;
 }
