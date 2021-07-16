@@ -27,10 +27,16 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-global $OUTPUT;
+$action = helpdesk_categories_param_action();
 
-echo $OUTPUT -> box_start('center');
+// TODO: Create action for record the new category to database
 
+switch ($action) {
+    case false: // OK, display form.
+        break;
+    case 'example':
+    default:
+        break;
+}
 
-
-echo $OUTPUT -> box_end();
+$categories = $DB->get_records('helpdesk_categories');
