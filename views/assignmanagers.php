@@ -29,14 +29,21 @@ if (!defined('MOODLE_INTERNAL')) {
 
 $action = helpdesk_categories_param_action();
 
-// TODO: Create action for record the new category to database
+echo '<form id="categoryeditform" action="index.php" method="post">
+        <div>
+            <table style="padding: 6px" class="generaltable generalbox categorymanagementtable boxaligncenter">
+                <tr>
+                    <td>
+                        <p>
+                            <label for="categories">
+                                <span id="categorieslabel">' . get_string('categories', 'local_helpdesk') . '</span>
+                                <span id="thecategorizing">&nbsp;</span>
+                            </label>
+                        </p>
+                        <select name="categories[]" multiple="multiple" id="categories" size="15" class="select" onchange="M.core_group.membersCombo.refreshMembers()"></select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+      </form>';
 
-switch ($action) {
-    case false: // OK, display form.
-        break;
-    case 'example':
-    default:
-        break;
-}
-
-$categories = $DB->get_records('helpdesk_categories');
