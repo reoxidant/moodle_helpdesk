@@ -124,7 +124,11 @@ if ($view === 'view') {
     if ($result !== -1) {
         switch ($screen) {
             case 'addcategory':
-                include($CFG -> dirroot . '/local/helpdesk/views/addcategory.php');
+                if (has_capability('local/helpdesk:manage', $context)) {
+                    include($CFG -> dirroot . '/local/helpdesk/views/addcategory.php');
+                } else {
+                    print_error('errornoaccessissue', 'local_helpdesk');
+                }
                 break;
             case 'addmanagers':
                 include($CFG -> dirroot . '/local/helpdesk/views/addmanagers.php');
