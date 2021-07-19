@@ -23,31 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../../config.php');
-
-require_once($CFG -> dirroot . 'local/helpdesk/lib.php');
-require_once($CFG -> dirroot . 'local/helpdesk/locallib.php');
-require_once($CFG -> dirroot . 'local/helpdesk/forms/reportissue_form.php');
-
-$screen = helpdesk_resolve_screen();
-$view = helpdesk_resolve_view();
-
-$context = context_system ::instance();
-
-require_login();
-require_capability('local/helpdesk:report', $context);
-
-$pluginname = get_string('pluginname', 'local_helpdesk');
+require_once($CFG -> dirroot . '/local/helpdesk/forms/addcategory_form.php');
 
 $url = new moodle_url('/local/helpdesk/addcategory.php');
-
-$context = context_system ::instance();
-$PAGE -> set_url($url);
-$PAGE -> set_context($context);
-$PAGE -> set_pagelayout('standard');
-$PAGE -> navbar -> add($pluginname);
-$PAGE -> set_title($pluginname);
-$PAGE -> set_heading($pluginname);
 
 $form = new addcategory_form($url);
 
@@ -73,11 +51,5 @@ if ($data) {
     redirect(new moodle_url('/local/helpdesk/view.php'));
 }
 
-echo $OUTPUT -> header();
-
-echo $OUTPUT -> heading(get_string('addcategory', 'local_helpdesk'));
-
 $form -> set_data($data);
 $form -> display();
-
-echo $OUTPUT -> footer();

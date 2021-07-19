@@ -41,13 +41,11 @@ class addcategory_form extends moodleform
         $mform -> addElement('hidden', 'categoryid');
         $mform -> setType('categoryid', PARAM_INT);
 
-        $mform -> addElement('text', 'name', get_string('name'), '');
+        $mform -> addElement('text', 'name', get_string('name'));
         $mform -> setType('name', PARAM_ALPHANUM);
         $mform -> addRule('name', null, 'required', null, 'client');
 
         $mform -> addElement('textarea', 'description', get_string('description'));
-
-        $mform -> addElemnt('checkbox', 'shared', get_string('sharethiselement', 'local_helpdesk'));
 
         $this -> add_action_buttons();
     }
