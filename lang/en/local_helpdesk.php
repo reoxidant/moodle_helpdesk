@@ -48,6 +48,7 @@ $string['raisetotop'] = 'Сделать первым в списке';
 $string['raisepriority'] = 'Повысить приоритет';
 $string['lowerpriority'] = 'Понизить приоритет';
 $string['lowertobottom'] = 'Сделать последним в списке';
+$string['categories'] = 'Категории';
 $string['managecategories'] = 'Управление категориями';
 $string['addcategory'] = 'Добавить категорию';
 $string['assignmanagers'] = 'Назначить менеджера';
