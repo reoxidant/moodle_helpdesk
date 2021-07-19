@@ -434,17 +434,11 @@ function helpdesk_getcategories(): array
 }
 
 /**
- * @param null $prefix
  * @return false|mixed
  * @throws moodle_exception
  */
-function helpdesk_categories_param_action($prefix = null)
+function helpdesk_categories_param_action(string $prefix = 'act_')
 {
-
-    if ($prefix == null) {
-        $prefix = 'act_';
-    }
-
     $action = false;
 
     if ($_POST) {
